@@ -1,0 +1,33 @@
+.form-group select {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-sizing: border-box;
+  transition: border 0.2s ease;
+}
+
+.form-group select:focus {
+  border-color: #ffca39;
+}
+
+html,
+body {
+  height: 100% !important; /* ← ここを強制 */
+  overflow-y: auto;
+}
+
+.login-page {
+  min-height: 100vh; /* ← ビューポートの高さを確保 */
+  overflow-y: auto; /* ← 縦スクロール有効に */
+  display: flex;
+  justify-content: center;
+  align-items: center; /* ← 必要なら中央寄せ */
+  padding: 40px 0; /* ← 上下余白でスクロールできるように！ */
+  box-sizing: border-box;
+}
+
+.form-group .category-row select {
+  padding: 10px 12px;
+}

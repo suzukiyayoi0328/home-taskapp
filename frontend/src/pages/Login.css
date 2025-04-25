@@ -1,3 +1,8 @@
+html,
+body {
+  height: 100%;
+}
+
 body {
   margin: 0;
   font-family: "Noto Sans JP", sans-serif;
@@ -5,10 +10,15 @@ body {
 }
 
 .login-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  background-color: #f5f7fa;
 }
 
 .login-card {
@@ -18,13 +28,14 @@ body {
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   text-align: center;
+  margin: 0 auto; /* 中央寄せの保険 */
 }
 
 .login-title {
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 32px;
-  color: #333333;
+  color: #ffca39;
 }
 
 .form-group {
@@ -50,23 +61,64 @@ body {
 }
 
 .form-group input:focus {
-  border-color: #ff9800;
-  outline: none;
+  border-color: #ffca39;
 }
 
-button {
-  width: 100%;
+.submit-button {
+  width: 50%;
   padding: 14px;
-  background-color: #ff9800;
+  background-color: #ffca39;
   color: white;
   font-size: 16px;
   font-weight: 600;
   border: none;
-  border-radius: 10px;
+  border-radius: 9999px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: 20px;
 }
 
-button:hover {
-  background-color: #e68900;
+.submit-button:hover {
+  background-color: #ff9800;
+}
+
+.login-card button:hover {
+  background-color: #ff9800;
+}
+
+.signup-link {
+  color: #ff9800;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  text-decoration: none; /* 下線なしがデフォルト */
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.signup-link:hover {
+  text-decoration: underline; /* ホバー時だけ下線追加！ */
+}
+
+.input-icon {
+  position: relative;
+}
+
+.input-icon .icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #aaa;
+}
+
+.form-group .input-icon input {
+  padding-left: 38px;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+  font-size: 14px;
 }

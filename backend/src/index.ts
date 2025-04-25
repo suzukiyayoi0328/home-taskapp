@@ -3,74 +3,129 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { db } from "./db";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import taskRouter from "./routes/tasks";
+import userRoutes from "./routes/user";
+import { authenticateToken } from "./middleware/auth"; // ★ これ追加！
+import categoryRoutes from "./routes/categories";
 
-// ミドルウェア関数
-const authenticateToken = (req: any, res: any, next: any) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1]; // "Bearer xxx" → "xxx"
-
-  if (!token) {
-    return res.status(401).json({ message: "トークンが必要です" });
-  }
-
-  jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
-    if (err) {
-      return res.status(403).json({ message: "トークンが無効です" });
-    }
-    req.user = user;
-    next();
-  });
-};
+const JWT_SECRET = "mysecretkey";
 
 const app = express();
 const port = 3001;
 
-// 秘密鍵（実際はもっと複雑な文字列が望ましい）
-const JWT_SECRET = "mysecretkey";
+// テストルート
+app.get("/test-debug", (req, res) => {
+  console.log("🔥 /test-debug にアクセスされた！");
+  res.send("テストルートOK！");
+});
 
+// ミドルウェア
 app.use(cors());
 app.use(bodyParser.json());
+app.use("/tasks", taskRouter);
+app.use("/api/users", userRoutes); // ✅ /api/users に userRoutes をマウント
+app.use("/api/categories", categoryRoutes); // ← これここ！
 
-// 仮のユーザーデータ
-const mockUser = {
-  username: "testuser",
-  password: "password123",
-};
-
-// ログインAPI
-app.post("/api/login", (req, res) => {
-  const { username, password } = req.body;
-
-  if (username === mockUser.username && password === mockUser.password) {
-    // JWTトークンを発行
-    const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: "1h" });
-
-    res.json({ token });
-  } else {
-    res
-      .status(401)
-      .json({ message: "ユーザー名またはパスワードが間違っています" });
-  }
-});
-
-app.post("/register", (req, res) => {
-  const { username, email, password } = req.body;
-
-  const sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
-  db.query(sql, [username, email, password], (err, result) => {
-    if (err) {
-      console.error("DBエラー:", err);
-      res.status(500).send("登録に失敗しました");
-    } else {
-      res.status(200).send("ユーザー登録成功！");
-    }
-  });
-});
-
+// サーバー起動
 app.listen(port, () => {
   console.log(`サーバー起動中 → http://localhost:${port}`);
 });
 
+// ログインAPI
+app.post("/api/login", (req, res) => {
+  const { email, password } = req.body;
+
+  const checkSql = "SELECT * FROM users202504171 WHERE email = ?";
+  db.query(checkSql, [email], (checkErr, results: any[]) => {
+    if (checkErr) {
+      console.error("ユーザー確認エラー:", checkErr);
+      return res.status(500).json({ message: "サーバーエラーが発生しました" });
+    }
+
+    if (results.length === 0) {
+      return res.status(401).json({ message: "ユーザーが見つかりません" });
+    }
+
+    const user = results[0];
+
+    bcrypt.compare(password, user.password, (err, isMatch) => {
+      if (err) {
+        console.error("パスワード照合エラー:", err);
+        return res
+          .status(500)
+          .json({ message: "サーバーエラーが発生しました" });
+      }
+
+      if (!isMatch) {
+        return res
+          .status(401)
+          .json({ message: "ユーザー名またはパスワードが間違っています" });
+      }
+
+      const token = jwt.sign(
+        { email: user.email, userId: user.id },
+        JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+
+      res.json({ token });
+    });
+  });
+});
+
+// ユーザー登録API
+app.post("/api/register", (req, res) => {
+  const { email, password } = req.body;
+
+  const checkSql = "SELECT * FROM users202504171 WHERE email = ?";
+  db.query(checkSql, [email], (checkErr, results: any[]) => {
+    if (checkErr) {
+      console.error("ユーザー確認エラー:", checkErr);
+      return res.status(500).json({ message: "サーバーエラーが発生しました" });
+    }
+
+    if (results.length > 0) {
+      return res
+        .status(409)
+        .json({ message: "このメールアドレスは既に使用されています" });
+    }
+
+    bcrypt.hash(password, 10, (hashErr, hashedPassword) => {
+      if (hashErr) {
+        console.error("ハッシュ化エラー:", hashErr);
+        return res
+          .status(500)
+          .json({ message: "登録に失敗しました（ハッシュ化エラー）" });
+      }
+
+      const insertSql =
+        "INSERT INTO users202504171 (email, password) VALUES (?, ?)";
+      db.query(insertSql, [email, hashedPassword], (insertErr, result) => {
+        if (insertErr) {
+          console.error("DB登録エラー:", insertErr);
+
+          const errorCode = (insertErr as any).code;
+          console.log("errorCode:", errorCode);
+
+          if (errorCode === "ER_DUP_ENTRY") {
+            console.log("💡 ER_DUP_ENTRY に入りました！");
+            return res.status(409).json({
+              message: "このメールアドレスは既に使用されています（DB）",
+            });
+          }
+
+          return res.status(500).json({ message: "登録に失敗しました" });
+        }
+
+        res.status(200).json({ message: "登録成功！" });
+      });
+    });
+  });
+});
+
+// 保護されたデータ取得API（おまけ）
 app.get("/api/protected", authenticateToken, (req: any, res) => {
+  // ★ ここ修正！
   res.json({ message: "これは保護されたデータです", user: req.user });
 });

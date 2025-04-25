@@ -1,0 +1,30 @@
+html,
+body {
+  height: auto;
+  min-height: 100%;
+}
+.login-page {
+  min-height: 100vh; /* 必ずスクロールできる高さ */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: #f5f7fa;
+  overflow-y: auto;
+  padding-top: 80px; /* ← 上は固定80px */
+  padding-bottom: 120px; /* ← 下だけ余白追加！ */
+}
+
+.login-card {
+  width: 420px;
+  padding: 48px 32px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.calendar-link {
+  display: inline-block;
+  margin-top: 10px;
+  text-align: left;
+}

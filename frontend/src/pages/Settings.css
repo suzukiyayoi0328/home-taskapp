@@ -1,0 +1,122 @@
+/* src/pages/Settings.css */
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: "Noto Sans JP", sans-serif;
+  background-color: #f5f7fa;
+}
+
+.settings-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.settings-card {
+  width: 420px;
+  padding: 48px 32px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  margin: 0 auto;
+}
+
+.settings-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 32px;
+  color: #ffca39;
+}
+
+.settings-description {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 24px;
+}
+
+.logout-button {
+  width: 50%;
+  padding: 14px;
+  background-color: #ffca39;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #ff9800;
+}
+
+.input-with-button {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.input-with-button input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.update-button {
+  padding: 10px 16px;
+  background-color: #ffa726;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.update-button:hover {
+  background-color: #fb8c00;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.success-message {
+  color: green;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.settings-page {
+  position: relative; /* ✅ これが必要！ */
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: #ffca39;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #ff9800;
+}

@@ -1,7 +1,15 @@
 {
   "compilerOptions": {
+    "jsx": "react-jsx",
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "types": ["node"],
+
     "esModuleInterop": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "rules": {
+      "@typescript-eslint/no-require-imports": "off",
+      "@typescript-eslint/no-var-requires": "off"
+    }
   },
   "files": [],
   "references": [

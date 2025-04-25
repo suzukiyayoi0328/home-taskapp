@@ -1,11 +1,37 @@
 import { useState } from "react";
-import "./Login.css";
+import "./login.css";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState("");
+
+  const EyeIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M12 4.5C7 4.5 2.7 9 1 12c1.7 3 6 7.5 11 7.5s9.3-4.5 11-7.5c-1.7-3-6-7.5-11-7.5zm0 12a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"
+        fill="#888"
+      />
+    </svg>
+  );
+
+  const EyeOffIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M3 3l18 18M10.6 6.3a5 5 0 0 1 6.9 6.9m-1.5 1.5a5 5 0 0 1-6.9-6.9"
+        stroke="#888"
+        strokeWidth="2"
+      />
+      <path
+        d="M12 5C7 5 2.7 9 1 12c1.7 3 6 7 11 7 1.8 0 3.4-.4 5-1.2"
+        stroke="#888"
+        strokeWidth="2"
+      />
+    </svg>
+  );
 
   const handleLogin = async () => {
     try {
@@ -14,7 +40,7 @@ function Login() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email: username, password }),
       });
 
       if (!response.ok) {
@@ -24,11 +50,11 @@ function Login() {
       const data = await response.json();
       console.log("ログイン成功！トークン:", data.token);
       localStorage.setItem("token", data.token);
-      alert("ログイン成功！");
       navigate("/mypage");
+      setLoginError("");
     } catch (error) {
       console.error("ログインエラー:", error);
-      alert("ログインに失敗しました。ユーザー名またはパスワードが違うかも！");
+      setLoginError("ユーザー名またはパスワードが違います");
     }
   };
   return (
@@ -38,25 +64,48 @@ function Login() {
 
         <div className="form-group">
           <label htmlFor="username">メールアドレス</label>
-          <input
-            id="username"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
+          <div className="input-icon">
+            <span className="icon">✉</span>
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
         </div>
 
         <div className="form-group">
           <label htmlFor="password">パスワード</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div className="input-icon">
+            <span className="icon">🔒</span>
+            <input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              className="password-toggle-btn"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+            </button>
+          </div>
         </div>
+        {loginError && <div className="error-message">{loginError}</div>}
+        <button className="submit-button" onClick={handleLogin}>
+          ログイン
+        </button>
 
-        <button onClick={handleLogin}>ログイン</button>
+        <p style={{ margin: "20px 0", fontSize: "14px", color: "#555" }}>
+          アカウントをお持ちでない方は{" "}
+          <span className="signup-link" onClick={() => navigate("/register")}>
+            無料新規登録
+          </span>{" "}
+          ですぐにご利用いただけます。
+        </p>
       </div>
     </div>
   );
