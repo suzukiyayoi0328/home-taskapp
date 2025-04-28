@@ -6,11 +6,7 @@
     "allowSyntheticDefaultImports": true,
 
     "esModuleInterop": true,
-    "moduleResolution": "node",
-    "rules": {
-      "@typescript-eslint/no-require-imports": "off",
-      "@typescript-eslint/no-var-requires": "off"
-    }
+    "moduleResolution": "node"
   },
   "files": [],
   "references": [
