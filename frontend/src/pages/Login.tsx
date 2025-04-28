@@ -99,11 +99,11 @@ function Login() {
           ログイン
         </button>
 
-        <p style={{ margin: "20px 0", fontSize: "14px", color: "#555" }}>
+        <p className="form-footer">
           アカウントをお持ちでない方は{" "}
           <span className="signup-link" onClick={() => navigate("/register")}>
             無料新規登録
-          </span>{" "}
+          </span>
           ですぐにご利用いただけます。
         </p>
       </div>

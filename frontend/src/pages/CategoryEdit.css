@@ -1,17 +1,8 @@
-/* CategoryAdd.css */
-
-.login-card {
-  width: 400px;
-  padding: 32px;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
 .login-title {
   font-size: 24px;
-  color: #ffca39;
+  .login-title {
+    color: var(--main-color) !important;
+  }
   margin-bottom: 24px;
 }
 
@@ -27,18 +18,9 @@
   color: #333;
 }
 
-.form-group input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-}
-
 .submit-button {
   width: 50%;
   padding: 12px;
-  background-color: #ffca39;
   color: #fff;
   font-size: 16px;
   font-weight: 600;
@@ -49,7 +31,7 @@
 }
 
 .submit-button:hover {
-  background-color: #ff9800;
+  background-color: var(--accent-color);
 }
 
 .delete-button {
@@ -69,6 +51,64 @@
   margin-right: auto;
 }
 
-.login-card .delete-button:hover {
-  background-color: #e00303;
+.category-edit-card .delete-button:hover {
+  background-color: #e20a0a; /* 濃い赤！ */
+}
+
+.color-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.color-box {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.color-box.selected {
+  border: 4px solid rgb(0, 0, 0);
+}
+
+.category-edit-card {
+  width: 420px;
+  padding: 48px 32px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  margin: 0 auto; /* ← 追加！（中央寄せ保険）*/
+}
+
+.category-edit-card {
+  width: 420px;
+  padding: 48px 32px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+body.dark .category-edit-card {
+  background-color: #333;
+}
+
+/* iPad 用だけ少し上寄せ */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .category-edit-page {
+    align-items: flex-start;
+    padding-top: 200px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .category-edit-page {
+    align-items: flex-start; /* ← 上寄せにして */
+    padding-top: 100px; /* ← 下げる！好きな値で調整してOK */
+    padding-bottom: 100px;
+  }
 }

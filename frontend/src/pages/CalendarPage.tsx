@@ -106,8 +106,6 @@ function CalendarPage() {
     const formatDate = (date: Date) => {
       return moment(date).format("YYYY-MM-DD HH:mm:ss");
     };
-    const categoryObj = categories.find((c) => c.name === data.category);
-    const categoryId = categoryObj ? categoryObj.id : null;
 
     const isEdit = !!selectedEvent;
     const url = isEdit
@@ -123,7 +121,7 @@ function CalendarPage() {
         body: JSON.stringify({
           start_time: formatDate(data.start),
           deadline: formatDate(data.end),
-          category: categoryId,
+          category: data.category,
           memo: data.memo,
         }),
       });
@@ -179,6 +177,66 @@ function CalendarPage() {
             month: "月",
             week: "週",
             day: "日",
+          }}
+          formats={{
+            timeGutterFormat: (
+              date: Date,
+              culture: string | undefined,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              localizer: any
+            ) => localizer.format(date, "HH:mm", culture),
+
+            headerFormat: (
+              date: Date,
+              culture: string | undefined,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              localizer: any
+            ) => localizer.format(date, "M月D日", culture),
+
+            monthHeaderFormat: (
+              date: Date,
+              culture: string | undefined,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              localizer: any
+            ) => localizer.format(date, "YYYY年M月", culture),
+
+            dayRangeHeaderFormat: (
+              { start, end }: { start: Date; end: Date },
+              culture: string | undefined,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              localizer: any
+            ) =>
+              `${localizer.format(
+                start,
+                "YYYY年M月D日",
+                culture
+              )} - ${localizer.format(end, "YYYY年M月D日", culture)}`,
+
+            agendaHeaderFormat: (
+              { start, end }: { start: Date; end: Date },
+              culture: string | undefined,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              localizer: any
+            ) =>
+              `${localizer.format(
+                start,
+                "YYYY年M月D日",
+                culture
+              )} - ${localizer.format(end, "YYYY年M月D日", culture)}`,
+
+            dayHeaderFormat: (
+              date: Date,
+              culture: string | undefined,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              localizer: any
+            ) => localizer.format(date, "YYYY年M月D日", culture),
+
+            dayFormat: (
+              date: Date,
+              culture: string | undefined,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              localizer: any
+            ) => localizer.format(date, "ddd", culture), // ← これだけ残す！
           }}
           eventPropGetter={(event: MyEvent) => ({
             style: {

@@ -120,3 +120,56 @@ body {
 .back-button:hover {
   background-color: #ff9800;
 }
+
+.toggle-theme-button {
+  width: 55%;
+  padding: 12px;
+  background-color: #ffca39;
+  color: white; /* ← こっち白に統一しちゃおう！ */
+  border: none;
+  border-radius: 9999px;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-theme-button:hover {
+  background-color: #ff9800;
+}
+
+/* ダークモード時 */
+body.dark .toggle-theme-button {
+  background-color: #444;
+  color: #fff;
+}
+/* ダークモード用設定 */
+body.dark .settings-card {
+  background-color: #333 !important; /* 背景を黒に */
+  color: #fff !important; /* 文字を白に */
+}
+
+body.dark .settings-title {
+  color: var(--main-color) !important; /* タイトル色をオレンジに */
+}
+
+body.dark .submit-button,
+body.dark .update-button {
+  background-color: #444 !important;
+  color: #fff !important; /* ボタン背景と文字色 */
+}
+
+body.dark .submit-button:hover,
+body.dark .update-button:hover {
+  background-color: #ff9800 !important; /* ボタンホバー時にオレンジ */
+}
+
+body.dark .logout-button {
+  background-color: #444 !important;
+  color: #fff !important;
+}
+
+body.dark .logout-button:hover {
+  background-color: #ff9800 !important; /* ログアウトボタンホバー時にオレンジ */
+}

@@ -3,6 +3,7 @@
     "jsx": "react-jsx",
     "typeRoots": ["./node_modules/@types", "./src/types"],
     "types": ["node"],
+    "allowSyntheticDefaultImports": true,
 
     "esModuleInterop": true,
     "moduleResolution": "node",

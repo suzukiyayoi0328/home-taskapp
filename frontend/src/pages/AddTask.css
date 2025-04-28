@@ -14,20 +14,119 @@
 
 html,
 body {
-  height: 100% !important; /* ← ここを強制 */
+  height: 100%;
   overflow-y: auto;
-}
-
-.login-page {
-  min-height: 100vh; /* ← ビューポートの高さを確保 */
-  overflow-y: auto; /* ← 縦スクロール有効に */
-  display: flex;
-  justify-content: center;
-  align-items: center; /* ← 必要なら中央寄せ */
-  padding: 40px 0; /* ← 上下余白でスクロールできるように！ */
-  box-sizing: border-box;
 }
 
 .form-group .category-row select {
   padding: 10px 12px;
+}
+
+.form-group {
+  margin-bottom: 20px; /* 各フォーム間の余白 */
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #ffca39; /* フォーカス時の色 */
+}
+
+.category-row {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* カテゴリ選択とカラーの間の隙間を調整 */
+}
+
+.category-select {
+  flex: 1;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.color-preview {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  margin-top: 0; /* 上の余白をなくす */
+}
+
+/* ダークモード：フォーム全体の背景と文字色 */
+body.dark .form-group input,
+body.dark .form-group textarea,
+body.dark .form-group select {
+  background-color: #444 !important; /* グレー背景 */
+  color: #fff !important; /* 白文字 */
+  border: 1px solid #555 !important; /* 枠線も少し濃いグレー */
+}
+
+/* プレースホルダー文字も白くする */
+body.dark .form-group input::placeholder,
+body.dark .form-group textarea::placeholder {
+  color: #ccc !important; /* プレースホルダーは少し薄めの白 */
+}
+
+html,
+body {
+  background-color: #ffecb7 !important;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.add-task-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* ← 完全中央 */
+}
+
+.add-task-card {
+  width: 420px;
+  padding: 48px 32px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  margin: 0 auto;
+}
+
+body.dark .add-task-card {
+  background-color: #333;
+}
+
+/* iPad用だけ少し上寄せ */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .add-task-page {
+    align-items: flex-start;
+    padding-top: 150px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .add-task-page {
+    align-items: flex-start; /* ← 上寄せにして */
+    padding-top: 100px; /* ← 下げる！好きな値で調整してOK */
+    padding-bottom: 100px;
+  }
 }

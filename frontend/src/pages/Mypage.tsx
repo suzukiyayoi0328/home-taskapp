@@ -5,7 +5,10 @@ import "./Mypage.css";
 import gearIcon from "../assets/noun-setting-4214910.svg";
 import moment from "moment-timezone";
 import { momentLocalizer } from "react-big-calendar";
+
 import { Calendar } from "react-big-calendar";
+// @ts-expect-error: moment/locale/ja has no type definitions but works fine
+import "moment/locale/ja";
 
 moment.locale("ja");
 moment.tz.setDefault("Asia/Tokyo");
@@ -20,6 +23,16 @@ type Task = {
   title: string;
   memo: string | null;
   is_done: number;
+  category_color?: string;
+};
+
+// Calendarイベント用の型定義を追加
+type CalendarEvent = {
+  id: number;
+  title: string;
+  start: Date;
+  end: Date;
+  category_color?: string;
 };
 
 function Mypage() {
@@ -42,6 +55,7 @@ function Mypage() {
         memo: task.memo ?? null,
         is_done: task.is_done ?? 0,
         title: task.category ?? "未分類",
+        category_color: task.category_color ?? "#000000", // ← これ追加！
       }));
       setTasks(formatted);
     } catch (err) {
@@ -79,6 +93,15 @@ function Mypage() {
   };
 
   useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+  }, []);
+
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
@@ -100,6 +123,18 @@ function Mypage() {
   const incompleteTasks = tasks.filter((task) => task.is_done === 0);
   const completeTasks = tasks.filter((task) => task.is_done === 1);
 
+  // 今日の日付 (0時にリセット)
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // 今日の未完了タスクをフィルタ
+  const todaysTasks = incompleteTasks.filter((task) => {
+    if (!task.deadline) return false;
+    const taskDate = new Date(task.deadline);
+    taskDate.setHours(0, 0, 0, 0);
+    return taskDate.getTime() === today.getTime();
+  });
+
   return (
     <div style={{ height: "100vh", overflowY: "auto" }}>
       <div className="mypage-container">
@@ -110,6 +145,9 @@ function Mypage() {
           {username} さん、マイページへようこそ！
         </h1>
         <p className="mypage-subtitle">今日も１日がんばりましょう！🌱🌱</p>
+        <p className="remaining-tasks">
+          今日の残りのタスク：{todaysTasks.length} 件
+        </p>
         <Link to="/add-task">
           <button className="submit-button">＋ タスクを追加する</button>
         </Link>
@@ -136,7 +174,7 @@ function Mypage() {
                   navigate("/calendar");
                 }}
               >
-                📅 タスクを追加
+                ＋ タスクを追加
               </button>
               <Calendar
                 localizer={localizer}
@@ -147,7 +185,20 @@ function Mypage() {
                     ? new Date(task.start_time)
                     : new Date(),
                   end: task.deadline ? new Date(task.deadline) : new Date(),
+                  category_color: task.category_color,
                 }))}
+                /// @ts-expect-error 型が合わないので無視
+                eventPropGetter={(event: CalendarEvent) => {
+                  const backgroundColor = event.category_color || "#ffca39";
+                  return {
+                    style: {
+                      backgroundColor,
+                      color: "white",
+                      borderRadius: "8px",
+                      padding: "2px",
+                    },
+                  };
+                }}
                 startAccessor="start"
                 endAccessor="end"
                 titleAccessor="title"
@@ -160,6 +211,74 @@ function Mypage() {
                 date={calendarDate}
                 onNavigate={(newDate: Date) => setCalendarDate(newDate)}
                 style={{ height: 500 }}
+                messages={{
+                  month: "月",
+                  week: "週",
+                  day: "日",
+                  today: "今日",
+                  previous: "前",
+                  next: "次",
+                }}
+                formats={{
+                  timeGutterFormat: (
+                    date: Date,
+                    culture: string | undefined,
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    localizer: any
+                  ) => localizer.format(date, "HH:mm", culture),
+
+                  headerFormat: (
+                    date: Date,
+                    culture: string | undefined,
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    localizer: any
+                  ) => localizer.format(date, "M月D日", culture),
+
+                  monthHeaderFormat: (
+                    date: Date,
+                    culture: string | undefined,
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    localizer: any
+                  ) => localizer.format(date, "YYYY年M月", culture),
+
+                  dayRangeHeaderFormat: (
+                    { start, end }: { start: Date; end: Date },
+                    culture: string | undefined,
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    localizer: any
+                  ) =>
+                    `${localizer.format(
+                      start,
+                      "YYYY年M月D日",
+                      culture
+                    )} - ${localizer.format(end, "YYYY年M月D日", culture)}`,
+
+                  agendaHeaderFormat: (
+                    { start, end }: { start: Date; end: Date },
+                    culture: string | undefined,
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    localizer: any
+                  ) =>
+                    `${localizer.format(
+                      start,
+                      "YYYY年M月D日",
+                      culture
+                    )} - ${localizer.format(end, "YYYY年M月D日", culture)}`,
+
+                  dayHeaderFormat: (
+                    date: Date,
+                    culture: string | undefined,
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    localizer: any
+                  ) => localizer.format(date, "YYYY年M月D日", culture),
+
+                  dayFormat: (
+                    date: Date,
+                    culture: string | undefined,
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    localizer: any
+                  ) => localizer.format(date, "ddd", culture), // ← これだけ残す！
+                }}
               />
             </div>
           </div>

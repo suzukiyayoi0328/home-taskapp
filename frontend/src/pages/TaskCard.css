@@ -27,16 +27,13 @@
   transition: background-color 0.3s ease;
 }
 
-/* 編集ボタン：左隣に配置 */
 .task-card .task-edit-button {
-  right: 60px; /* ← こっちを60pxにする */
+  right: 60px;
 }
 
-/* 削除ボタン：右端 */
 .task-card .task-delete-button {
-  right: 12px; /* ← こっちを12pxにする */
+  right: 12px;
 }
-
 .task-card .task-edit-button:hover,
 .task-card .task-delete-button:hover {
   background-color: #ff9800;
@@ -45,34 +42,66 @@
 .task-title {
   display: flex;
   align-items: center;
-  gap: 8px; /* チェックボックスとタイトルの間隔 */
+  gap: 8px;
   font-weight: bold;
   font-size: 18px;
   margin-bottom: 8px;
   color: #ff9800;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
 }
 
-.task-title {
-  border-bottom: 1px solid #ddd; /* グレーの線 */
-  padding-bottom: 4px; /* 線との間隔 */
-  margin-bottom: 8px; /* 下の要素との間隔 */
-}
-
+/* メモ */
 .task-memo {
   border-bottom: 1px solid #ddd;
   padding-bottom: 4px;
   margin-bottom: 8px;
+  word-break: break-word;
+  white-space: pre-wrap;
+  max-width: 100%;
+  color: #666;
 }
 
+/* 日時 */
 .task-datetime {
   font-size: 14px;
   color: #6de996;
   margin: 0;
 }
 
-.task-memo {
-  word-break: break-word; /* 単語の途中でも折り返す */
-  white-space: pre-wrap; /* 改行も反映＋折り返し */
-  max-width: 100%; /* カード内で収める */
-  color: #666; /* 色も調整できるよ！ */
+body.dark .task-card {
+  background-color: #333;
+  color: #fff;
+}
+
+body.dark .task-title {
+  color: #ffca39;
+  border-bottom: 1px solid #555;
+}
+
+body.dark .task-memo {
+  color: #ccc;
+  border-bottom: 1px solid #555;
+}
+
+body.dark .task-datetime {
+  color: #6de996;
+}
+
+body.dark .common-icon-button {
+  background-color: #555;
+  color: #fff;
+}
+
+body.dark .common-icon-button:hover {
+  background-color: #777;
+}
+
+.task-card.done {
+  background-color: #3a3a3a25; /* 薄いグレー背景 */
+}
+
+/* ダークモードでも調整 */
+body.dark .task-card.done {
+  background-color: #555; /* ダーク時は濃いグレー */
 }

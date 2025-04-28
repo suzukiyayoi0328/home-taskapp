@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect } from "react"; // 追加
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Mypage from "./pages/Mypage";
@@ -9,9 +10,17 @@ import EditTask from "./pages/EditTask";
 import CategoryEdit from "./pages/CategoryEdit";
 import CalendarPage from "./pages/CalendarPage"; // ← カレンダー追加
 
-// パスは "./pages/CalendarTest" にしてる？
-
 function App() {
+  // 🌙 ダークモードの初期反映
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+  }, []);
+
   return (
     <Router>
       <Routes>
@@ -33,8 +42,6 @@ function App() {
           path="/calendar"
           element={
             <PrivateRoute>
-              {" "}
-              {/* カレンダーもログイン後のみ */}
               <CalendarPage />
             </PrivateRoute>
           }

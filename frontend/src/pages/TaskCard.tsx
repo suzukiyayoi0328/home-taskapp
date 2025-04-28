@@ -54,7 +54,7 @@ function TaskCard({
 
   return (
     <div
-      className="task-card"
+      className={`task-card ${task.is_done === 1 ? "done" : ""}`}
       style={{
         position: "relative",
         border: "1px solid #ccc",
@@ -135,15 +135,41 @@ function TaskCard({
           </p>
         </div>
 
-        {/* 残り日数 */}
+        {/* 残り */}
         <p style={{ margin: 0, color: "#f44336", fontWeight: "bold" }}>
           {task.deadline
             ? (() => {
-                const diff = Math.ceil(
-                  (new Date(task.deadline).getTime() - new Date().getTime()) /
-                    (1000 * 60 * 60 * 24)
+                const now = new Date().getTime();
+                const deadline = new Date(task.deadline).getTime();
+                const diffMs = deadline - now;
+                const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+                let text = "";
+                let color = "";
+
+                if (diffMs >= 0) {
+                  // 期限内
+                  text = `${diffDays}日`;
+                  color = diffDays <= 3 ? "#f44336" : "#4caf50"; // 3日以内なら赤、4日以上は黄緑
+                } else {
+                  // 期限切れ
+                  const absDiffMs = Math.abs(diffMs);
+                  const diffHours = Math.floor(absDiffMs / (1000 * 60 * 60));
+                  const diffMinutes = Math.floor(absDiffMs / (1000 * 60));
+
+                  if (diffHours >= 24) {
+                    text = `${Math.floor(diffHours / 24)}日切れ`;
+                  } else if (diffHours >= 1) {
+                    text = `${diffHours}時間切れ`;
+                  } else {
+                    text = `${diffMinutes}分切れ`;
+                  }
+                  color = "#f44336"; // 期限切れは赤
+                }
+
+                return (
+                  <span style={{ color, fontWeight: "bold" }}>{text}</span>
                 );
-                return `${diff}日`;
               })()
             : ""}
         </p>

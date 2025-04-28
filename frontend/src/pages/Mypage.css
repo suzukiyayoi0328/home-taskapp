@@ -1,5 +1,13 @@
 /* src/pages/Mypage.css */
 
+html,
+body {
+  background-color: #ffe294 !important;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 .mypage-container {
   max-width: 800px;
   margin: 0 auto;
@@ -30,19 +38,6 @@
   text-align: center;
 }
 
-.settings-link {
-  margin-top: 16px;
-  font-size: 16px;
-  color: #ff9800;
-  text-decoration: none;
-  display: inline-block;
-  transition: 0.2s;
-}
-
-.settings-link:hover {
-  text-decoration: underline;
-}
-
 .task-section-title {
   font-size: 20px;
   margin-top: 32px;
@@ -61,7 +56,10 @@
   padding: 40px 20px;
   font-family: "Noto Sans JP", sans-serif;
   color: #333;
-  background-color: #f9fafb;
+  .mypage-container {
+    background-color: #ffca39; /* ← ここ */
+    color: var(--text-color); /* ← ここ */
+  }
 
   /* ← 追加 */
   min-height: 100vh;
@@ -350,4 +348,213 @@
   background-color: #ff9800 !important; /* アクティブ時もオレンジ */
   color: white !important;
   box-shadow: none !important; /* デフォのinset影を消す */
+}
+
+.remaining-tasks {
+  display: block;
+  padding: 6px 12px;
+  background-color: #ffe1ba; /* 明るいオレンジ背景 */
+  color: #fd3232; /* 文字色は濃いめで見やすく */
+  border-radius: 9999px; /* 角丸 */
+  font-weight: bold;
+  width: fit-content;
+  margin-top: 10px auto;
+  font-size: 16px;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+button {
+  padding: 12px;
+  border: none;
+  border-radius: 9999px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: var(--main-color);
+  color: var(--light-text);
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: var(--accent-color) !important;
+  color: white !important;
+}
+
+:root {
+  --light-bg: #f9fafb;
+  --light-text: #333;
+  --dark-bg: #1a1a1a;
+  --dark-text: #f9fafb;
+  --main-color: #ffca39;
+  --accent-color: #ff9800;
+
+  --bg-color: var(--light-bg);
+  --text-color: var(--light-text);
+}
+
+/* ダークモード用 */
+body.dark {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+}
+
+/* ボタン */
+button {
+  padding: 12px;
+  border: none;
+  border-radius: 9999px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: var(--main-color);
+  color: var(--light-text);
+  transition: background-color 0.3s ease;
+}
+
+body.dark button {
+  background-color: #444;
+  color: var(--dark-text);
+}
+
+/* タスクカード */
+.task-card {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+body.dark .task-card {
+  background-color: #333;
+  color: var(--dark-text);
+}
+
+/* カレンダー */
+.calendar-modal-content {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+body.dark .calendar-modal-content {
+  background-color: #444;
+  color: #fff;
+}
+
+/* その他のカスタムスタイル */
+.gear-icon svg {
+  fill: var(--main-color);
+}
+
+body.dark .gear-icon svg {
+  fill: var(--main-color);
+}
+
+body.dark .delete-all-button,
+body.dark .calendar-add-button,
+body.dark .close-button,
+body.dark .rbc-toolbar button {
+  background-color: var(--main-color);
+  color: white;
+}
+
+body.dark .delete-all-button:hover,
+body.dark .calendar-add-button:hover,
+body.dark .close-button:hover,
+body.dark .rbc-toolbar button:hover,
+body.dark .rbc-toolbar button:active,
+body.dark .rbc-toolbar button.rbc-active {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.task-button {
+  background-color: var(--main-color);
+  color: var(--light-text);
+}
+
+body.dark .task-button {
+  background-color: #444;
+  color: var(--dark-text);
+}
+
+body.dark .mypage-container {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+}
+
+html,
+body {
+  background-color: #ffca39 !important;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ダークモード時も背景色を固定 */
+body.dark {
+  background-color: #272727 !important;
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    width: 90%; /* カードの横幅を広げる（画面幅の90%） */
+    padding: 32px 20px; /* パディングも少し小さく */
+  }
+
+  .login-title {
+    font-size: 22px; /* タイトル文字サイズダウン */
+  }
+
+  .form-group input {
+    font-size: 14px; /* 入力欄の文字サイズも小さく */
+    padding: 12px 14px; /* 余白調整 */
+  }
+
+  .submit-button {
+    width: 100%; /* ボタンを横いっぱいに */
+  }
+
+  .form-footer {
+    font-size: 12px; /* 案内文も少し小さく */
+  }
+}
+
+@media (max-width: 480px) {
+  .mypage-container {
+    padding: 20px 10px; /* パディングを縮める */
+  }
+
+  .user-greeting {
+    font-size: 16px; /* あいさつ文も小さく */
+  }
+
+  .task-columns {
+    flex-direction: column; /* 2列 → 1列に */
+    gap: 10px; /* 間隔を縮める */
+  }
+
+  .task-card {
+    width: 100%; /* カードを横いっぱいに */
+  }
+
+  .task-button {
+    width: 100%; /* ボタンも横いっぱいに */
+  }
+
+  .gear-icon {
+    top: 10px; /* さらに上にあげる */
+    left: 10px; /* 左も少し詰める */
+    width: 36px; /* アイコンを小さく */
+    height: 36px;
+  }
+
+  .mypage-title {
+    margin-top: 40px; /* タイトルに余白追加（アイコン分） */
+  }
+}
+
+.task-column-header {
+  display: flex;
+  align-items: center; /* ← 縦方向中央寄せ */
+  justify-content: space-between; /* ← 左右に配置 */
+  margin-bottom: 26px; /* ← 下の余白 */
+  height: 65px; /* ← 高さを揃える！お好みで調整してOK */
 }

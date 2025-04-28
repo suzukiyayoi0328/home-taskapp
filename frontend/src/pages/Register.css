@@ -6,7 +6,12 @@ body {
 body {
   margin: 0;
   font-family: "Noto Sans JP", sans-serif;
-  background-color: #f5f7fa;
+  background-color: var(--light-bg);
+}
+
+body.dark {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
 }
 
 .login-page {
@@ -18,8 +23,12 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f5f7fa;
+  color: #ffca39;
   overflow-y: scroll;
+}
+
+body.dark .login-page {
+  background-color: var(--dark-bg);
 }
 
 .login-card {
@@ -31,11 +40,15 @@ body {
   text-align: center;
 }
 
+body.dark .login-card {
+  background-color: #333;
+}
+
 .login-title {
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 32px;
-  color: #ffca39;
+  color: var(--main-color);
 }
 
 .form-group {
@@ -47,7 +60,11 @@ body {
   display: block;
   margin-bottom: 8px;
   font-size: 14px;
-  color: #333;
+  color: var(--light-text);
+}
+
+body.dark .form-group label {
+  color: var(--dark-text);
 }
 
 .form-group input {
@@ -61,7 +78,7 @@ body {
 }
 
 .form-group input:focus {
-  border-color: #ffca39;
+  border-color: var(--main-color);
 }
 
 .error-message {
@@ -70,14 +87,13 @@ body {
   font-size: 14px;
 }
 
-/* アイコン付き input 全体をまとめる wrapper */
 .input-icon {
   position: relative;
 }
 
 .input-icon input {
   padding-left: 38px;
-  padding-right: 38px; /* 👁アイコンのために右も余白 */
+  padding-right: 38px;
 }
 
 .icon {
@@ -89,7 +105,6 @@ body {
   color: #aaa;
 }
 
-/* 👁 パスワード表示切り替えボタン */
 .password-toggle-btn {
   all: unset;
   position: absolute;
@@ -102,35 +117,56 @@ body {
   z-index: 2;
 }
 
-/* 登録 or ログインボタン専用スタイル */
-.submit-button {
-  width: 50%;
-  padding: 14px;
-  background-color: #ffca39;
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  border: none;
-  border-radius: 9999px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 20px;
-  display: block;
-  margin: 20px auto;
-}
-
-.submit-button:hover {
-  background-color: #ff9800;
-}
-
-.login-card .password-toggle-btn:hover {
+.password-toggle-btn:hover {
   background-color: transparent;
   border: none;
   color: #888;
 }
 
-.error-message {
-  color: red;
-  margin-top: 10px;
+.submit-button {
+  color: #ffca39;
+  width: 50%;
+  margin-top: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  color: white;
+}
+
+button.submit-button {
+  background-color: #ffca39;
+  color: white;
+}
+
+button.submit-button:hover {
+  background-color: #ff9800 !important;
+  color: white !important;
+}
+
+.form-footer {
+  margin: 20px 0;
   font-size: 14px;
+  color: #555; /* 読みやすいグレーに調整 */
+}
+
+/* ダークモード用 */
+body.dark .form-footer {
+  color: #eee; /* ダークモード時はさらに明るめ */
+}
+@media (min-width: 481px) and (max-width: 1024px) {
+  html,
+  body {
+    height: 100vh; /* ← これをvhに！ */
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* ← 念のため追加 */
+  }
+
+  .login-page {
+    min-height: 100vh;
+    height: 100vh; /* ← これ追加 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }

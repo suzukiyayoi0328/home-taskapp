@@ -5,12 +5,31 @@ import "./CategoryEdit.css";
 
 function CategoryEdit() {
   const [name, setName] = useState(""); // カテゴリ名
-  const [message, setMessage] = useState(""); // 成功・エラーメッセージ
-  const navigate = useNavigate();
+  const [color, setColor] = useState("#ffca39"); // カラー（デフォルト色）
+  const [message, setMessage] = useState("");
   const [categories, setCategories] = useState<{ id: number; name: string }[]>(
     []
   );
   const [selectedCategory, setSelectedCategory] = useState("");
+  const navigate = useNavigate();
+
+  const colorOptions = [
+    "#ffca39",
+    "#ff9800",
+    "#f44336",
+    "#e91e63",
+    "#9c27b0",
+    "#673ab7",
+    "#3f51b5",
+    "#2196f3",
+    "#03a9f4",
+    "#00bcd4",
+    "#009688",
+    "#4caf50",
+    "#8bc34a",
+    "#cddc39",
+    "#795548",
+  ];
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -34,10 +53,9 @@ function CategoryEdit() {
         `http://localhost:3001/api/categories/${selectedCategory}`
       );
       alert("カテゴリを削除しました！");
-      // 削除後の一覧再取得
       const res = await axios.get("http://localhost:3001/api/categories");
       setCategories(res.data);
-      setSelectedCategory(""); // プルダウン初期化
+      setSelectedCategory("");
     } catch (err) {
       console.error("カテゴリ削除失敗", err);
       alert("削除に失敗しました…");
@@ -45,8 +63,7 @@ function CategoryEdit() {
   };
 
   const handleAddCategory = async (e: React.FormEvent) => {
-    e.preventDefault(); // フォーム送信防止
-
+    e.preventDefault();
     if (!name.trim()) {
       setMessage("カテゴリ名を入力してください！");
       return;
@@ -55,10 +72,12 @@ function CategoryEdit() {
     try {
       const res = await axios.post("http://localhost:3001/api/categories", {
         name,
+        category_color: color, // 色も送信
       });
       console.log("✅ カテゴリ追加成功:", res.data);
       setMessage("カテゴリを追加しました！");
-      setName(""); // フォームクリア
+      setName("");
+      setColor("#ffca39"); // 初期色に戻す
     } catch (err) {
       console.error("❌ カテゴリ追加失敗", err);
       setMessage("カテゴリの追加に失敗しました…");
@@ -66,8 +85,8 @@ function CategoryEdit() {
   };
 
   return (
-    <div className="login-page">
-      <div className="login-card">
+    <div className="category-edit-page">
+      <div className="category-edit-card">
         <h2 className="login-title">カテゴリを編集</h2>
         <form onSubmit={handleAddCategory}>
           <div className="form-group">
@@ -79,6 +98,22 @@ function CategoryEdit() {
               required
             />
           </div>
+
+          {/* カラー選択欄 */}
+          <div className="form-group">
+            <label>カラー選択</label>
+            <div className="color-palette">
+              {colorOptions.map((c) => (
+                <div
+                  key={c}
+                  className={`color-box ${color === c ? "selected" : ""}`}
+                  style={{ backgroundColor: c }}
+                  onClick={() => setColor(c)}
+                />
+              ))}
+            </div>
+          </div>
+
           <button type="submit" className="submit-button">
             追加する
           </button>

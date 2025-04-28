@@ -22,20 +22,22 @@ router.get("/", (req: any, res: any) => {
   ORDER BY 
     CASE WHEN deadline IS NULL THEN 1 ELSE 0 END,
     deadline ASC
-`;
+  `;
+
   db.query(sql, (err, results) => {
     if (err) {
       console.error("タスク一覧取得エラー:", err);
       return res.status(500).json({ message: "一覧取得に失敗しました" });
     }
-    console.log("📦 タスク一覧取得結果:", results);
-    res.status(200).json(results);
+    const rows = results as RowDataPacket[];
+    console.log("📦 タスク一覧取得結果:", rows);
+    res.status(200).json(rows);
   });
 });
 
 // ✅ タスク追加（POST /tasks）
 router.post("/", (req: any, res: any) => {
-  const { start_time, deadline, category, memo = null } = req.body; // ここ修正！
+  const { start_time, deadline, category, memo = null } = req.body;
   console.log("🚀 受信データ (POST):", {
     start_time,
     deadline,
@@ -43,33 +45,75 @@ router.post("/", (req: any, res: any) => {
     memo,
   });
 
-  const insertSql = `
-    INSERT INTO tasks20250418 (start_time, deadline, category, memo, is_done)
-    VALUES (?, ?, ?, ?, 0)
-  `;
-  db.query(
-    insertSql,
-    [start_time || null, deadline || null, category || null, memo || null],
-    (err, result) => {
-      if (err) {
-        console.error("タスク登録エラー:", err);
-        return res.status(500).json({ message: "タスクの登録に失敗しました" });
+  // カテゴリ名がない場合はそのまま登録
+  if (!category) {
+    const insertSql = `
+      INSERT INTO tasks20250418 (start_time, deadline, category, memo, is_done)
+      VALUES (?, ?, NULL, ?, 0)
+    `;
+    db.query(
+      insertSql,
+      [start_time || null, deadline || null, memo || null],
+      (err, result) => {
+        if (err) {
+          console.error("タスク登録エラー:", err);
+          return res
+            .status(500)
+            .json({ message: "タスクの登録に失敗しました" });
+        }
+        const insertResult = result as ResultSetHeader;
+        return res
+          .status(201)
+          .json({ message: "タスク登録完了！", taskId: insertResult.insertId });
       }
+    );
+    return;
+  }
 
-      const insertResult = result as ResultSetHeader;
-      res.status(201).json({
-        message: "タスク登録完了！",
-        taskId: insertResult.insertId,
-      });
+  // カテゴリ名からIDを取得
+  const categorySql = "SELECT id FROM categories WHERE name = ?";
+  db.query(categorySql, [category], (err, results) => {
+    if (err) {
+      console.error("カテゴリID取得エラー:", err);
+      return res.status(500).json({ message: "カテゴリの取得に失敗しました" });
     }
-  );
+
+    const rows = results as RowDataPacket[];
+    if (rows.length === 0) {
+      return res.status(400).json({ message: "カテゴリが存在しません" });
+    }
+
+    const categoryId = rows[0].id;
+
+    // タスク登録
+    const insertSql = `
+      INSERT INTO tasks20250418 (start_time, deadline, category, memo, is_done)
+      VALUES (?, ?, ?, ?, 0)
+    `;
+    db.query(
+      insertSql,
+      [start_time || null, deadline || null, categoryId, memo || null],
+      (err, result) => {
+        if (err) {
+          console.error("タスク登録エラー:", err);
+          return res
+            .status(500)
+            .json({ message: "タスクの登録に失敗しました" });
+        }
+        const insertResult = result as ResultSetHeader;
+        res
+          .status(201)
+          .json({ message: "タスク登録完了！", taskId: insertResult.insertId });
+      }
+    );
+  });
 });
 
 // ✅ ステータス更新（PATCH /tasks/:id）
 router.patch("/:id", (req: any, res: any) => {
   const taskId = req.params.id;
   const { is_done } = req.body;
-  console.log("🔧 PATCHリクエスト受信:", { taskId, is_done }); // 追加！
+  console.log("🔧 PATCHリクエスト受信:", { taskId, is_done });
 
   if (typeof is_done !== "number") {
     return res.status(400).json({ message: "is_doneは数値で指定してください" });
@@ -90,11 +134,9 @@ router.patch("/:id", (req: any, res: any) => {
 
 // ✅ タスク更新（PUT /tasks/:id）
 router.put("/:id", (req: any, res: any) => {
-  console.log("受け取ったデータ:", req.body);
   const taskId = req.params.id;
   const { start_time, deadline, category, memo = null } = req.body;
-
-  console.log("受け取ったデータ:", req.body); // デバッグ
+  console.log("受け取ったデータ:", req.body);
 
   const sql = `
     UPDATE tasks20250418
@@ -121,10 +163,11 @@ router.put("/:id", (req: any, res: any) => {
     }
   );
 });
-//タスク全削除
+
+// ✅ 完了タスク全削除（DELETE /tasks/completed）
 router.delete("/completed", (req, res) => {
   const sql = "DELETE FROM tasks20250418 WHERE is_done = 1";
-  db.query(sql, (err, result) => {
+  db.query(sql, (err) => {
     if (err) {
       console.error("完了タスク削除エラー:", err);
       return res.status(500).json({ message: "削除に失敗しました" });
@@ -132,6 +175,7 @@ router.delete("/completed", (req, res) => {
     res.json({ message: "完了タスクを削除しました" });
   });
 });
+
 // ✅ タスク削除（DELETE /tasks/:id）
 router.delete("/:id", (req, res) => {
   const taskId = req.params.id;
@@ -150,7 +194,18 @@ router.delete("/:id", (req, res) => {
 // ✅ タスク詳細取得（GET /tasks/:id）
 router.get("/:id", (req: any, res: any) => {
   const taskId = req.params.id;
-  const sql = "SELECT * FROM tasks20250418 WHERE id = ?";
+  const sql = `
+    SELECT 
+      tasks20250418.*, 
+      categories.name AS category, 
+      categories.color AS category_color
+    FROM 
+      tasks20250418
+    LEFT JOIN 
+      categories ON tasks20250418.category = categories.id
+    WHERE 
+      tasks20250418.id = ?
+  `;
 
   db.query(sql, [taskId], (err, results) => {
     if (err) {

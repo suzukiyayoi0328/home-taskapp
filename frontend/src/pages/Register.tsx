@@ -170,7 +170,7 @@ function Register() {
           登録
         </button>
 
-        <p style={{ margin: "20px 0", fontSize: "14px", color: "#555" }}>
+        <p className="form-footer">
           すでにアカウントをお持ちですか？{" "}
           <span className="signup-link" onClick={() => navigate("/")}>
             ログイン

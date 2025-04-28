@@ -1,0 +1,80 @@
+/* common.css */
+:root {
+  --light-bg: #f9fafb;
+  --light-text: #333;
+  --dark-bg: #1a1a1a;
+  --dark-text: #f9fafb;
+  --main-color: #ffca39;
+  --accent-color: #ff9800;
+
+  --bg-color: var(--light-bg);
+  --text-color: var(--light-text);
+}
+
+body {
+  font-family: "Noto Sans JP", sans-serif;
+  background-color: var(--light-bg);
+  color: var(--light-text);
+  margin: 0;
+  padding: 0;
+}
+
+body.dark {
+  --bg-color: var(--dark-bg);
+  --text-color: var(--dark-text);
+}
+
+button {
+  padding: 12px;
+  border: none;
+  border-radius: 9999px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: var(--main-color);
+  color: var(--light-text);
+  transition: background-color 0.3s ease;
+}
+
+body.dark button {
+  background-color: #444;
+  color: var(--dark-text);
+}
+
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* 通常ボタンのデフォルト文字色 */
+button {
+  background-color: var(--main-color);
+  color: white; /* ← ここを固定！ */
+}
+
+/* ダークモードでも白文字を維持 */
+body.dark button {
+  background-color: #444;
+  color: var(--dark-text);
+}
+
+.common-icon-button {
+  background-color: #ffca39;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.common-icon-button:hover {
+  background-color: #ff9800;
+}

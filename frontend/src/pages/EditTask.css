@@ -14,7 +14,20 @@ body {
   padding-bottom: 120px; /* ← 下だけ余白追加！ */
 }
 
-.login-card {
+.calendar-link {
+  display: block; /* or inline-blockでもOK */
+  width: 100%; /* これ追加！ */
+  text-align: left;
+}
+
+.edit-task-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.edit-task-card {
   width: 420px;
   padding: 48px 32px;
   background-color: #ffffff;
@@ -23,8 +36,22 @@ body {
   text-align: center;
 }
 
-.calendar-link {
-  display: inline-block;
-  margin-top: 10px;
-  text-align: left;
+body.dark .edit-task-card {
+  background-color: #333;
+}
+
+/* iPad 用だけ上寄せ */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .edit-task-page {
+    align-items: flex-start;
+    padding-top: 150px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .edit-task-page {
+    align-items: flex-start;
+    padding-top: 100px;
+    padding-bottom: 100px;
+  }
 }

@@ -2,7 +2,6 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./EditTask.css";
-import "./TaskForm.css";
 
 type Task = {
   id: number;
@@ -77,8 +76,8 @@ function EditTask() {
   };
 
   return (
-    <div className="login-page">
-      <div className="login-card">
+    <div className="edit-task-page">
+      <div className="edit-task-card">
         <button className="back-button" onClick={() => navigate(-1)}>
           ← マイページに戻る
         </button>

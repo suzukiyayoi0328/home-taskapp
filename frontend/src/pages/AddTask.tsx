@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import "./AddTask.css";
-import "./TaskForm.css";
 
 function AddTask() {
   const [startTime, setStartTime] = useState("");
@@ -61,8 +60,8 @@ function AddTask() {
   };
 
   return (
-    <div className="login-page">
-      <div className="login-card">
+    <div className="add-task-page">
+      <div className="add-task-card">
         <button className="back-button" onClick={() => navigate(-1)}>
           ← マイページに戻る
         </button>
