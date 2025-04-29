@@ -4,7 +4,6 @@ import {
   Event as RBCEvent,
 } from "react-big-calendar";
 import moment from "moment-timezone";
-// @ts-expect-error 型定義がないので無視
 import "moment/locale/ja";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState, useEffect, useCallback } from "react";

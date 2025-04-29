@@ -7,7 +7,6 @@ import moment from "moment-timezone";
 import { momentLocalizer } from "react-big-calendar";
 
 import { Calendar } from "react-big-calendar";
-// @ts-expect-error: moment/locale/ja has no type definitions but works fine
 import "moment/locale/ja";
 
 moment.locale("ja");
