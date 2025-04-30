@@ -3,7 +3,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { db } from "./db";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import taskRouter from "./routes/tasks";
 import userRoutes from "./routes/user";
 import { authenticateToken } from "./middleware/auth"; // ★ これ追加！
