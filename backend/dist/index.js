@@ -8,25 +8,20 @@ const cors_1 = __importDefault(require("cors"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const db_1 = require("./db");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const tasks_1 = __importDefault(require("./routes/tasks"));
 const user_1 = __importDefault(require("./routes/user"));
-const auth_1 = require("./middleware/auth"); // ★ これ追加！
+const auth_1 = require("./middleware/auth");
 const categories_1 = __importDefault(require("./routes/categories"));
 const JWT_SECRET = "mysecretkey";
 const app = (0, express_1.default)();
 const port = 3001;
-// テストルート
-app.get("/test-debug", (req, res) => {
-    console.log("🔥 /test-debug にアクセスされた！");
-    res.send("テストルートOK！");
-});
 // ミドルウェア
 app.use((0, cors_1.default)());
 app.use(body_parser_1.default.json());
 app.use("/tasks", tasks_1.default);
-app.use("/api/users", user_1.default); // ✅ /api/users に userRoutes をマウント
-app.use("/api/categories", categories_1.default); // ← これここ！
+app.use("/api/users", user_1.default);
+app.use("/api/categories", categories_1.default);
 // サーバー起動
 app.listen(port, () => {
     console.log(`サーバー起動中 → http://localhost:${port}`);
@@ -44,7 +39,7 @@ app.post("/api/login", (req, res) => {
             return res.status(401).json({ message: "ユーザーが見つかりません" });
         }
         const user = results[0];
-        bcrypt_1.default.compare(password, user.password, (err, isMatch) => {
+        bcryptjs_1.default.compare(password, user.password, (err, isMatch) => {
             if (err) {
                 console.error("パスワード照合エラー:", err);
                 return res
@@ -75,7 +70,7 @@ app.post("/api/register", (req, res) => {
                 .status(409)
                 .json({ message: "このメールアドレスは既に使用されています" });
         }
-        bcrypt_1.default.hash(password, 10, (hashErr, hashedPassword) => {
+        bcryptjs_1.default.hash(password, 10, (hashErr, hashedPassword) => {
             if (hashErr) {
                 console.error("ハッシュ化エラー:", hashErr);
                 return res
@@ -101,8 +96,7 @@ app.post("/api/register", (req, res) => {
         });
     });
 });
-// 保護されたデータ取得API（おまけ）
+// 保護されたデータ取得API
 app.get("/api/protected", auth_1.authenticateToken, (req, res) => {
-    // ★ ここ修正！
     res.json({ message: "これは保護されたデータです", user: req.user });
 });

@@ -8,8 +8,8 @@ const mysql2_1 = __importDefault(require("mysql2"));
 exports.db = mysql2_1.default.createConnection({
     host: "localhost",
     user: "root",
-    password: "password", // 自分の設定に合わせて
-    database: "home_task_app", // 実際に作ったDB名に合わせてね
+    password: "password",
+    database: "home_task_app",
 });
 exports.db.connect((err) => {
     if (err) {

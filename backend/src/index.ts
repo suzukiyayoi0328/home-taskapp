@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import taskRouter from "./routes/tasks";
 import userRoutes from "./routes/user";
-import { authenticateToken } from "./middleware/auth"; // ★ これ追加！
+import { authenticateToken } from "./middleware/auth";
 import categoryRoutes from "./routes/categories";
 
 const JWT_SECRET = "mysecretkey";
@@ -14,18 +14,12 @@ const JWT_SECRET = "mysecretkey";
 const app = express();
 const port = 3001;
 
-// テストルート
-app.get("/test-debug", (req, res) => {
-  console.log("🔥 /test-debug にアクセスされた！");
-  res.send("テストルートOK！");
-});
-
 // ミドルウェア
 app.use(cors());
 app.use(bodyParser.json());
 app.use("/tasks", taskRouter);
-app.use("/api/users", userRoutes); // ✅ /api/users に userRoutes をマウント
-app.use("/api/categories", categoryRoutes); // ← これここ！
+app.use("/api/users", userRoutes);
+app.use("/api/categories", categoryRoutes);
 
 // サーバー起動
 app.listen(port, () => {
@@ -124,8 +118,7 @@ app.post("/api/register", (req, res) => {
   });
 });
 
-// 保護されたデータ取得API（おまけ）
+// 保護されたデータ取得API
 app.get("/api/protected", authenticateToken, (req: any, res) => {
-  // ★ ここ修正！
   res.json({ message: "これは保護されたデータです", user: req.user });
 });
