@@ -17,7 +17,8 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.14.0"
+    "mysql2": "^3.14.0",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@types/axios": "^0.9.36",
@@ -26,7 +27,6 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.14.1",
     "nodemon": "^3.1.9",
-    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }
 }
