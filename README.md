@@ -28,8 +28,6 @@ cd frontend
 npm install
 npm run dev
 
-###バックエンド
-
 cd backend
 npm install
 npm start
