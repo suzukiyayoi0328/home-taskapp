@@ -6,13 +6,31 @@ function Settings() {
   const navigate = useNavigate();
 
   const [newUsername, setNewUsername] = useState("");
-  const [message, setMessage] = useState("");
-  const [isError, setIsError] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastText, setToastText] = useState("");
+  const [isFadingOut, setIsFadingOut] = useState(false);
 
-  // 🌙 ダークモード用
+  const [toastType, setToastType] = useState<"success" | "delete">("success");
+
+  const showToastMessage = (
+    text: string,
+    type: "success" | "delete" = "success"
+  ) => {
+    setToastText(text);
+    setToastType(type);
+    setShowToast(true);
+    setIsFadingOut(false);
+
+    setTimeout(() => setIsFadingOut(true), 3000);
+    setTimeout(() => {
+      setShowToast(false);
+      setIsFadingOut(false);
+    }, 4000);
+  };
+
+  // ダークモード用
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // ダークモードの状態をローカルストレージから読み込む
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "dark") {
@@ -20,7 +38,6 @@ function Settings() {
     }
   }, []);
 
-  // ダークモード切替時にbodyクラスとローカルストレージを更新
   useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add("dark");
@@ -31,7 +48,6 @@ function Settings() {
     }
   }, [isDarkMode]);
 
-  // ユーザー情報取得
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -53,8 +69,7 @@ function Settings() {
 
   const handleUpdateUsername = async () => {
     if (!newUsername.trim()) {
-      setMessage("ユーザー名を入力してください");
-      setIsError(true);
+      showToastMessage("ユーザー名を入力してください", "delete");
       return;
     }
 
@@ -72,13 +87,11 @@ function Settings() {
         }
       );
 
-      const data = await res.json();
-      setMessage(data.message);
-      setIsError(false);
+      await res.json();
+      showToastMessage("ユーザー名を更新しました！");
     } catch (err) {
       console.error("ユーザー名更新失敗", err);
-      setMessage("更新に失敗しました");
-      setIsError(true);
+      showToastMessage("更新に失敗しました");
     }
   };
 
@@ -113,15 +126,8 @@ function Settings() {
               名前を変更する
             </button>
           </div>
-
-          {message && (
-            <p className={isError ? "error-message" : "success-message"}>
-              {message}
-            </p>
-          )}
         </div>
 
-        {/* 🌙 ダークモード切替ボタン */}
         <button
           className="toggle-theme-button"
           onClick={() => setIsDarkMode(!isDarkMode)}
@@ -133,6 +139,15 @@ function Settings() {
           ログアウト
         </button>
       </div>
+      {showToast && (
+        <div
+          className={`toast ${toastType === "delete" ? "toast-delete" : ""} ${
+            isFadingOut ? "hide" : ""
+          }`}
+        >
+          {toastText}
+        </div>
+      )}
     </div>
   );
 }

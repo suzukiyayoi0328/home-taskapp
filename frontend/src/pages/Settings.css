@@ -1,5 +1,3 @@
-/* src/pages/Settings.css */
-
 html,
 body {
   height: 100%;
@@ -98,7 +96,7 @@ body {
 }
 
 .settings-page {
-  position: relative; /* ✅ これが必要！ */
+  position: relative;
 }
 
 .back-button {
@@ -125,7 +123,7 @@ body {
   width: 55%;
   padding: 12px;
   background-color: #ffca39;
-  color: white; /* ← こっち白に統一しちゃおう！ */
+  color: white;
   border: none;
   border-radius: 9999px;
   font-weight: bold;
@@ -144,25 +142,25 @@ body.dark .toggle-theme-button {
   background-color: #444;
   color: #fff;
 }
-/* ダークモード用設定 */
+
 body.dark .settings-card {
-  background-color: #333 !important; /* 背景を黒に */
-  color: #fff !important; /* 文字を白に */
+  background-color: #333 !important;
+  color: #fff !important;
 }
 
 body.dark .settings-title {
-  color: var(--main-color) !important; /* タイトル色をオレンジに */
+  color: var(--main-color) !important;
 }
 
 body.dark .submit-button,
 body.dark .update-button {
   background-color: #444 !important;
-  color: #fff !important; /* ボタン背景と文字色 */
+  color: #fff !important;
 }
 
 body.dark .submit-button:hover,
 body.dark .update-button:hover {
-  background-color: #ff9800 !important; /* ボタンホバー時にオレンジ */
+  background-color: #ff9800 !important;
 }
 
 body.dark .logout-button {
@@ -171,5 +169,5 @@ body.dark .logout-button {
 }
 
 body.dark .logout-button:hover {
-  background-color: #ff9800 !important; /* ログアウトボタンホバー時にオレンジ */
+  background-color: #ff9800 !important;
 }

@@ -6,8 +6,10 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import taskRouter from "./routes/tasks";
 import userRoutes from "./routes/user";
-import { authenticateToken } from "./middleware/auth";
+import authenticateToken from "./middleware/auth";
+
 import categoryRoutes from "./routes/categories";
+import uploadRouter from "./routes/upload";
 
 const JWT_SECRET = "mysecretkey";
 
@@ -20,6 +22,7 @@ app.use(bodyParser.json());
 app.use("/tasks", taskRouter);
 app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/upload", uploadRouter);
 
 // サーバー起動
 app.listen(port, () => {
@@ -57,11 +60,9 @@ app.post("/api/login", (req, res) => {
           .json({ message: "ユーザー名またはパスワードが間違っています" });
       }
 
-      const token = jwt.sign(
-        { email: user.email, userId: user.id },
-        JWT_SECRET,
-        { expiresIn: "1h" }
-      );
+      const token = jwt.sign({ email: user.email, id: user.id }, JWT_SECRET, {
+        expiresIn: "1h",
+      });
 
       res.json({ token });
     });

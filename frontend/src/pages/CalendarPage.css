@@ -9,46 +9,42 @@ body,
   height: 100%;
 }
 
-/* CalendarPage.css に追加 */
 .rbc-time-header {
   min-width: 0;
   overflow-y: hidden;
 }
 
 .rbc-time-content {
-  min-width: 0; /* 各時間カラム幅も縮める */
+  min-width: 0;
 }
 
 .rbc-time-slot {
-  min-height: 30px; /* 1時間ごとの高さ（必要なら調整） */
+  min-height: 30px;
 }
 
-/* カレンダー全体 */
 .rbc-calendar {
-  min-width: 300px; /* 横幅確保 */
+  min-width: 300px;
   min-height: 1000px;
   font-family: "Noto Sans JP", sans-serif;
   background-color: #ffffff;
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   padding: 20px;
-  height: 80vh; /* 高さ固定 */
-  overflow: hidden; /* 内部スクロールを防ぐ */
+  height: 80vh;
+  overflow: hidden;
 }
 
-/* ツールバー */
 .rbc-toolbar {
   display: flex;
-  justify-content: center; /* ← 中央寄せ */
+  justify-content: center;
   align-items: center;
-  gap: 40px; /* ← ボタン群の間隔調整 */
+  gap: 40px;
 }
 
-/* 左右のボタン群 */
 .rbc-toolbar .rbc-btn-group:first-child,
 .rbc-toolbar .rbc-btn-group:last-child {
   display: flex;
-  gap: 8px; /* ← ボタン間のスペース調整 */
+  gap: 8px;
 }
 
 .rbc-toolbar-label {
@@ -73,7 +69,6 @@ body,
   background-color: var(--main-color);
 }
 
-/* カレンダーのヘッダー（日付部分） */
 .rbc-header {
   background-color: #f5f7fa;
   color: #333;
@@ -82,7 +77,6 @@ body,
   border-bottom: 1px solid #ccc;
 }
 
-/* イベント */
 .rbc-event {
   background-color: var(--main-color);
   border: none;
@@ -93,18 +87,16 @@ body,
   font-weight: 600;
 }
 
-/* 今日のセル */
 .rbc-today {
-  background-color: #fff8e1; /* 薄い黄色で目立たせる */
+  background-color: #fff8e1;
 }
 
-/* セルの枠線 */
 .rbc-day-bg {
   border: 1px solid #eee;
 }
 
 .rbc-time-view {
-  height: 80vh; /* 高さをしっかり固定 */
+  height: 80vh;
 }
 
 .calendar-wrapper {
@@ -113,33 +105,32 @@ body,
   justify-content: center;
   align-items: center;
   background-color: #f5f7fa;
-  padding: 0; /* ← 余白なくす！ */
-  margin: 0; /* ← これも保険でなくす！ */
+  padding: 0;
+  margin: 0;
 }
 .calendar-scroll {
   overflow-x: auto;
   overflow-y: hidden;
   width: 80vw;
-  background-color: #ffffff; /* ← カレンダー本体の白背景 */
+  background-color: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); /* ここもカレンダーに */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .rbc-calendar {
-  min-width: 900px; /* カレンダー全体の最小幅（これ以上縮まない） */
+  min-width: 900px;
   height: 100%;
 }
 .rbc-time-header-gutter {
-  min-width: 60px; /* 時間カラムの幅 */
+  min-width: 60px;
 }
 
 .calendar-outer {
-  /* これで優先度アップ！ */
   overflow: auto !important;
 }
 
 .calendar-inner {
-  height: calc(100vh - 40px); /* 上下のpadding分だけ引く */
+  height: calc(100vh - 40px);
   width: 80vw;
   background-color: #ffffff;
   border-radius: 16px;
@@ -162,7 +153,7 @@ body,
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  z-index: 1000; /* カレンダーより前面に */
+  z-index: 1000;
 }
 
 .back-button:hover {
@@ -171,19 +162,16 @@ body,
 
 /* ダークモード用 */
 
-/* カレンダー背景とテキストの色 */
 body.dark .rbc-calendar {
   background-color: #333 !important;
   color: #fff !important;
 }
 
-/* ツールバーの背景と文字色 */
 body.dark .rbc-toolbar {
   background-color: #444 !important;
   color: #fff !important;
 }
 
-/* ツールバーのボタン */
 body.dark .rbc-toolbar button {
   background-color: #555 !important;
   color: #fff !important;
@@ -193,43 +181,35 @@ body.dark .rbc-toolbar button:hover {
   background-color: #ff9800 !important;
 }
 
-/* ヘッダー（曜日の部分） */
 body.dark .rbc-header {
   background-color: #444 !important;
   color: #fff !important;
   border-bottom: 1px solid #555 !important;
 }
 
-/* 今日のセル */
 body.dark .rbc-today {
   background-color: #444 !important;
   color: #ff9800 !important;
 }
 
-/* イベント */
 body.dark .rbc-event {
-  background-color: var(--accent-color) !important;
   color: #fff !important;
 }
 
-/* セルの枠線 */
 body.dark .rbc-day-bg {
   border: 1px solid #666 !important;
 }
 
-/* カレンダー外枠 */
 body.dark .calendar-wrapper {
   background-color: #222 !important;
 }
 
-/* カレンダー本体 */
 body.dark .calendar-inner {
   background-color: #333 !important;
   color: #fff !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* ボタン */
 body.dark .back-button {
   background-color: #444 !important;
   color: #fff !important;
@@ -239,14 +219,12 @@ body.dark .back-button:hover {
   background-color: #ff9800 !important;
 }
 
-/* カレンダー内の時間帯カラム */
 body.dark .rbc-time-header,
 body.dark .rbc-time-content {
   background-color: #444 !important;
   color: #fff !important;
 }
 
-/* カレンダーの枠線を変更 */
 body.dark .rbc-time-slot {
   background-color: #444 !important;
   color: #fff !important;
@@ -255,41 +233,41 @@ body.dark .rbc-time-slot {
 
 @media (max-width: 480px) {
   .rbc-calendar {
-    min-width: 100%; /* 横幅いっぱい */
-    font-size: 12px; /* フォント小さく */
+    min-width: 100%;
+    font-size: 12px;
   }
 
   .rbc-time-header-gutter {
-    min-width: 40px; /* 時間カラムも細く */
+    min-width: 40px;
   }
 
   .rbc-toolbar-label {
-    font-size: 16px; /* ヘッダー文字も小さめ */
+    font-size: 16px;
   }
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
   .calendar-wrapper {
-    overflow-x: hidden; /* 横スクロール禁止 */
-    padding: 20px; /* 余白を適度に */
+    overflow-x: hidden;
+    padding: 20px;
   }
 
   .calendar-scroll {
-    width: 100%; /* 横幅いっぱいに広げる */
-    overflow-x: hidden; /* 横スクロール禁止 */
+    width: 100%;
+    overflow-x: hidden;
   }
 
   .rbc-calendar {
-    min-width: auto; /* 最小幅の制限を解除 */
-    width: 100%; /* 横幅を画面いっぱいに */
+    min-width: auto;
+    width: 100%;
   }
 
   .rbc-time-header-gutter {
-    min-width: 50px; /* 時間カラムも調整 */
+    min-width: 50px;
   }
 
   .rbc-toolbar {
-    gap: 20px; /* ツールバーのボタン間隔を狭める */
-    flex-wrap: wrap; /* ボタンが折り返せるように */
+    gap: 20px;
+    flex-wrap: wrap;
   }
 }

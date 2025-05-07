@@ -4,9 +4,14 @@ import { useNavigate } from "react-router-dom";
 import "./CategoryEdit.css";
 
 function CategoryEdit() {
-  const [name, setName] = useState(""); // カテゴリ名
-  const [color, setColor] = useState("#ffca39"); // カラー（デフォルト色）
+  const [name, setName] = useState("");
+  const [color, setColor] = useState("#ffca39");
   const [message, setMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
+  const [isFadingOut, setIsFadingOut] = useState(false);
+  const [deleteToastVisible, setDeleteToastVisible] = useState(false);
+  const [isDeleteFadingOut, setIsDeleteFadingOut] = useState(false);
+
   const [categories, setCategories] = useState<{ id: number; name: string }[]>(
     []
   );
@@ -34,7 +39,11 @@ function CategoryEdit() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("http://localhost:3001/api/categories");
+        const token = localStorage.getItem("token");
+        const res = await axios.get("http://localhost:3001/api/categories", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
         setCategories(res.data);
       } catch (err) {
         console.error("カテゴリ取得失敗", err);
@@ -44,18 +53,29 @@ function CategoryEdit() {
   }, []);
 
   const handleDeleteCategory = async () => {
+    const token = localStorage.getItem("token");
+
     if (!selectedCategory) return;
 
     if (!window.confirm("本当に削除しますか？")) return;
 
     try {
       await axios.delete(
-        `http://localhost:3001/api/categories/${selectedCategory}`
+        `http://localhost:3001/api/categories/${selectedCategory}`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert("カテゴリを削除しました！");
-      const res = await axios.get("http://localhost:3001/api/categories");
+      const res = await axios.get("http://localhost:3001/api/categories", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       setCategories(res.data);
       setSelectedCategory("");
+
+      setDeleteToastVisible(true);
+      setIsDeleteFadingOut(false);
+
+      setTimeout(() => setIsDeleteFadingOut(true), 3000);
+      setTimeout(() => setDeleteToastVisible(false), 4000);
     } catch (err) {
       console.error("カテゴリ削除失敗", err);
       alert("削除に失敗しました…");
@@ -64,20 +84,33 @@ function CategoryEdit() {
 
   const handleAddCategory = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!name.trim()) {
       setMessage("カテゴリ名を入力してください！");
       return;
     }
 
     try {
-      const res = await axios.post("http://localhost:3001/api/categories", {
-        name,
-        category_color: color, // 色も送信
-      });
-      console.log("✅ カテゴリ追加成功:", res.data);
-      setMessage("カテゴリを追加しました！");
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "http://localhost:3001/api/categories",
+        {
+          name,
+          category_color: color,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
       setName("");
-      setColor("#ffca39"); // 初期色に戻す
+      setColor("#ffca39");
+
+      setShowToast(true);
+      setIsFadingOut(false);
+
+      setTimeout(() => setIsFadingOut(true), 3000);
+      setTimeout(() => setShowToast(false), 4000);
     } catch (err) {
       console.error("❌ カテゴリ追加失敗", err);
       setMessage("カテゴリの追加に失敗しました…");
@@ -99,7 +132,6 @@ function CategoryEdit() {
             />
           </div>
 
-          {/* カラー選択欄 */}
           <div className="form-group">
             <label>カラー選択</label>
             <div className="color-palette">
@@ -145,6 +177,20 @@ function CategoryEdit() {
           ← タスクを編集に戻る
         </button>
       </div>
+
+      {showToast && (
+        <div className={`toast ${isFadingOut ? "hide" : ""}`}>
+          カテゴリを追加しました！
+        </div>
+      )}
+
+      {deleteToastVisible && (
+        <div
+          className={`toast toast-delete ${isDeleteFadingOut ? "hide" : ""}`}
+        >
+          カテゴリを削除しました！
+        </div>
+      )}
     </div>
   );
 }

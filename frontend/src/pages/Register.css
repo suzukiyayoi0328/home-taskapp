@@ -146,25 +146,25 @@ button.submit-button:hover {
 .form-footer {
   margin: 20px 0;
   font-size: 14px;
-  color: #555; /* 読みやすいグレーに調整 */
+  color: #555;
 }
 
 /* ダークモード用 */
 body.dark .form-footer {
-  color: #eee; /* ダークモード時はさらに明るめ */
+  color: #eee;
 }
 @media (min-width: 481px) and (max-width: 1024px) {
   html,
   body {
-    height: 100vh; /* ← これをvhに！ */
+    height: 100vh;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* ← 念のため追加 */
+    overflow: hidden;
   }
 
   .login-page {
     min-height: 100vh;
-    height: 100vh; /* ← これ追加 */
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;

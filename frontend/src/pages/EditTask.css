@@ -4,19 +4,19 @@ body {
   min-height: 100%;
 }
 .login-page {
-  min-height: 100vh; /* 必ずスクロールできる高さ */
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   background-color: #f5f7fa;
   overflow-y: auto;
-  padding-top: 80px; /* ← 上は固定80px */
-  padding-bottom: 120px; /* ← 下だけ余白追加！ */
+  padding-top: 80px;
+  padding-bottom: 120px;
 }
 
 .calendar-link {
-  display: block; /* or inline-blockでもOK */
-  width: 100%; /* これ追加！ */
+  display: block;
+  width: 100%;
   text-align: left;
 }
 
@@ -40,7 +40,6 @@ body.dark .edit-task-card {
   background-color: #333;
 }
 
-/* iPad 用だけ上寄せ */
 @media (min-width: 768px) and (max-width: 1024px) {
   .edit-task-page {
     align-items: flex-start;

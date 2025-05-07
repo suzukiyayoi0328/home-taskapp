@@ -6,12 +6,13 @@ body {
 body {
   margin: 0;
   font-family: "Noto Sans JP", sans-serif;
-  background-color: var(--light-bg); /* ← 共通色に変更！ */
-  color: var(--light-text); /* ← フォント色も共通に */
+  background-color: var(--light-bg);
+  color: var(--light-text);
 }
 
+/* ダークモード用 */
 body.dark {
-  background-color: var(--dark-bg); /* ダークモード対応 */
+  background-color: var(--dark-bg);
   color: var(--dark-text);
 }
 
@@ -24,7 +25,7 @@ body.dark {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--light-bg); /* ← 共通背景に */
+  background-color: var(--light-bg);
 }
 
 body.dark .login-page {
@@ -42,14 +43,14 @@ body.dark .login-page {
 }
 
 body.dark .login-card {
-  background-color: #333; /* ダークモード背景 */
+  background-color: #333;
 }
 
 .login-title {
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 32px;
-  color: var(--main-color); /* ← 共通カラーに */
+  color: var(--main-color);
 }
 
 .form-group {
@@ -61,7 +62,7 @@ body.dark .login-card {
   display: block;
   margin-bottom: 8px;
   font-size: 14px;
-  color: var(--light-text); /* ← 共通カラーに */
+  color: var(--light-text);
 }
 
 body.dark .form-group label {
@@ -82,7 +83,6 @@ body.dark .form-group label {
   border-color: var(--main-color);
 }
 
-/* ボタンは共通の submit-button クラス */
 .submit-button {
   width: 50%;
   margin-top: 20px;
@@ -138,56 +138,55 @@ button.submit-button:hover {
 .form-footer {
   margin: 20px 0;
   font-size: 14px;
-  color: #555; /* 読みやすいグレーに調整 */
+  color: #555;
 }
 
-/* ダークモード用 */
 body.dark .form-footer {
-  color: #eee; /* さらに明るいグレーに */
+  color: #eee;
 }
 
 @media (max-width: 480px) {
   .login-card {
-    width: 90%; /* カードの横幅を広げる（画面幅の90%） */
-    padding: 32px 20px; /* パディングも少し小さく */
+    width: 90%;
+    padding: 32px 20px;
   }
 
   .login-title {
-    font-size: 22px; /* タイトル文字サイズダウン */
+    font-size: 22px;
   }
 
   .form-group input {
-    font-size: 14px; /* 入力欄の文字サイズも小さく */
-    padding: 12px 14px; /* 余白調整 */
+    font-size: 14px;
+    padding: 12px 14px;
   }
 
   .submit-button {
-    width: 100%; /* ボタンを横いっぱいに */
+    width: 100%;
   }
 
   .form-footer {
-    font-size: 12px; /* 案内文も少し小さく */
+    font-size: 12px;
   }
 }
 
 @media (min-width: 481px) and (max-width: 1024px) {
   html {
-    background-color: var(--light-bg) !important; /* ← ここ追加！ */
+    background-color: var(--light-bg) !important;
     height: 100%;
   }
 }
 @media (min-width: 481px) and (max-width: 1024px) {
   html,
   body {
-    height: 100vh; /* ← これをvhに！ */
+    height: 100vh;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* ← 念のため追加 */
+    overflow: hidden;
   }
 
   .login-page {
     min-height: 100vh;
-    height: 100vh; /* ← これ追加 */
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;

@@ -12,6 +12,13 @@
   border-color: #ffca39;
 }
 
+.left-error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: left;
+}
+
 html,
 body {
   height: 100%;
@@ -23,7 +30,7 @@ body {
 }
 
 .form-group {
-  margin-bottom: 20px; /* 各フォーム間の余白 */
+  margin-bottom: 20px;
 }
 
 .form-group label {
@@ -47,13 +54,13 @@ body {
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
-  border-color: #ffca39; /* フォーカス時の色 */
+  border-color: #ffca39;
 }
 
 .category-row {
   display: flex;
   align-items: center;
-  gap: 10px; /* カテゴリ選択とカラーの間の隙間を調整 */
+  gap: 10px;
 }
 
 .category-select {
@@ -68,22 +75,21 @@ body {
   height: 40px;
   border-radius: 50%;
   border: 1px solid #ccc;
-  margin-top: 0; /* 上の余白をなくす */
+  margin-top: 0;
 }
 
-/* ダークモード：フォーム全体の背景と文字色 */
+/* ダークモード*/
 body.dark .form-group input,
 body.dark .form-group textarea,
 body.dark .form-group select {
-  background-color: #444 !important; /* グレー背景 */
-  color: #fff !important; /* 白文字 */
-  border: 1px solid #555 !important; /* 枠線も少し濃いグレー */
+  background-color: #444 !important;
+  color: #fff !important;
+  border: 1px solid #555 !important;
 }
 
-/* プレースホルダー文字も白くする */
 body.dark .form-group input::placeholder,
 body.dark .form-group textarea::placeholder {
-  color: #ccc !important; /* プレースホルダーは少し薄めの白 */
+  color: #ccc !important;
 }
 
 html,
@@ -98,7 +104,7 @@ body {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center; /* ← 完全中央 */
+  align-items: center;
 }
 
 .add-task-card {
@@ -115,7 +121,6 @@ body.dark .add-task-card {
   background-color: #333;
 }
 
-/* iPad用だけ少し上寄せ */
 @media (min-width: 768px) and (max-width: 1024px) {
   .add-task-page {
     align-items: flex-start;
@@ -125,8 +130,27 @@ body.dark .add-task-card {
 
 @media (min-width: 1025px) {
   .add-task-page {
-    align-items: flex-start; /* ← 上寄せにして */
-    padding-top: 100px; /* ← 下げる！好きな値で調整してOK */
+    align-items: flex-start;
+
+    padding-top: 100px;
+
     padding-bottom: 100px;
   }
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
+}
+
+.form-group label[for="repeat"] {
+  margin-top: 24px;
+}
+
+.form-group.repeat-group {
+  margin-top: 24px;
 }

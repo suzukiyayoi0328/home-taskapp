@@ -25,7 +25,6 @@ type Task = {
   category_color?: string;
 };
 
-// Calendarイベント用の型定義を追加
 type CalendarEvent = {
   id: number;
   title: string;
@@ -44,17 +43,41 @@ function Mypage() {
     "week"
   );
   const [calendarDate, setCalendarDate] = useState(new Date());
+  const [showToast, setShowToast] = useState(false);
+  const [isFadingOut, setIsFadingOut] = useState(false);
+  const [toastText, setToastText] = useState("");
+
+  useEffect(() => {
+    const taskAddedFlag = localStorage.getItem("taskAdded");
+    const taskUpdatedFlag = localStorage.getItem("taskUpdated");
+
+    if (taskAddedFlag === "true" || taskUpdatedFlag === "true") {
+      const message =
+        taskUpdatedFlag === "true"
+          ? "タスクを更新しました！"
+          : "タスクを追加しました！";
+      showToastWithFade(message);
+
+      localStorage.removeItem("taskAdded");
+      localStorage.removeItem("taskUpdated");
+    }
+  }, []);
 
   const fetchTasks = async () => {
     try {
-      const res = await fetch("http://localhost:3001/tasks");
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost:3001/tasks", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const data = await res.json();
       const formatted = data.map((task: Omit<Task, "title">) => ({
         ...task,
         memo: task.memo ?? null,
         is_done: task.is_done ?? 0,
         title: task.category ?? "未分類",
-        category_color: task.category_color ?? "#000000", // ← これ追加！
+        category_color: task.category_color ?? "#000000",
       }));
       setTasks(formatted);
     } catch (err) {
@@ -62,15 +85,63 @@ function Mypage() {
     }
   };
 
+  const showToastWithFade = (text: string) => {
+    setToastText(text);
+    setShowToast(true);
+    setIsFadingOut(false);
+
+    setTimeout(() => setIsFadingOut(true), 3000);
+    setTimeout(() => {
+      setShowToast(false);
+      setIsFadingOut(false);
+    }, 4000);
+  };
+
+  const handleDeleteWithToast = async (taskId: number) => {
+    try {
+      await fetch(`http://localhost:3001/tasks/${taskId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      fetchTasks();
+
+      setToastText("タスクを削除しました！");
+      setShowToast(true);
+      setIsFadingOut(false);
+      setTimeout(() => setIsFadingOut(true), 3000);
+      setTimeout(() => {
+        setShowToast(false);
+        setIsFadingOut(false);
+      }, 4000);
+    } catch (err) {
+      console.error("削除失敗", err);
+      alert("削除に失敗しました");
+    }
+  };
+
+  useEffect(() => {
+    const loginFlag = localStorage.getItem("loginSuccess");
+    if (loginFlag === "true") {
+      showToastWithFade("ログインしました！");
+      localStorage.removeItem("loginSuccess");
+    }
+  }, []);
+
   const handleDeleteAllCompleted = async () => {
     const confirmed = window.confirm("全ての完了したタスクを削除しますか？");
     if (!confirmed) return;
     try {
       await fetch("http://localhost:3001/tasks/completed", {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
-      alert("完了タスクを全て削除しました！");
       fetchTasks();
+
+      showToastWithFade("完了したタスクをすべて削除しました！");
     } catch (err) {
       console.error("全削除失敗", err);
       alert("削除に失敗しました");
@@ -119,15 +190,33 @@ function Mypage() {
   if (!isAuthChecked)
     return <p className="task-empty-message">認証確認中...</p>;
 
-  const incompleteTasks = tasks.filter((task) => task.is_done === 0);
-  const completeTasks = tasks.filter((task) => task.is_done === 1);
+  const incompleteTasks = tasks
+    .filter((task) => task.is_done === 0)
+    .sort((a, b) => {
+      const dateA = a.deadline ? new Date(a.deadline).getTime() : Infinity;
+      const dateB = b.deadline ? new Date(b.deadline).getTime() : Infinity;
+      return dateA - dateB;
+    });
 
-  // 今日の日付 (0時にリセット)
+  const completeTasks = tasks
+    .filter((task) => task.is_done === 1)
+    .sort((a, b) => {
+      const dateA = a.deadline ? new Date(a.deadline).getTime() : Infinity;
+      const dateB = b.deadline ? new Date(b.deadline).getTime() : Infinity;
+      return dateA - dateB;
+    });
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // 今日の未完了タスクをフィルタ
   const todaysTasks = incompleteTasks.filter((task) => {
+    if (!task.deadline) return false;
+    const taskDate = new Date(task.deadline);
+    taskDate.setHours(0, 0, 0, 0);
+    return taskDate.getTime() === today.getTime();
+  });
+
+  const completeTodayTasks = completeTasks.filter((task) => {
     if (!task.deadline) return false;
     const taskDate = new Date(task.deadline);
     taskDate.setHours(0, 0, 0, 0);
@@ -144,9 +233,21 @@ function Mypage() {
           {username} さん、マイページへようこそ！
         </h1>
         <p className="mypage-subtitle">今日も１日がんばりましょう！🌱🌱</p>
-        <p className="remaining-tasks">
-          今日の残りのタスク：{todaysTasks.length} 件
-        </p>
+        {todaysTasks.length + completeTodayTasks.length > 0 && (
+          <p className="remaining-tasks">
+            {completeTodayTasks.length ===
+            todaysTasks.length + completeTodayTasks.length
+              ? "今日のタスクはすべて完了しました 🎉"
+              : completeTodayTasks.length === 0
+              ? `今日のタスク ${
+                  todaysTasks.length + completeTodayTasks.length
+                } 件`
+              : `今日のタスク ${
+                  todaysTasks.length + completeTodayTasks.length
+                } 件中 ${completeTodayTasks.length} 件完了 🎉`}
+          </p>
+        )}
+
         <Link to="/add-task">
           <button className="submit-button">＋ タスクを追加する</button>
         </Link>
@@ -276,7 +377,7 @@ function Mypage() {
                     culture: string | undefined,
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     localizer: any
-                  ) => localizer.format(date, "ddd", culture), // ← これだけ残す！
+                  ) => localizer.format(date, "ddd", culture),
                 }}
               />
             </div>
@@ -294,7 +395,7 @@ function Mypage() {
                   key={task.id}
                   task={task}
                   onStatusChange={fetchTasks}
-                  onDelete={fetchTasks}
+                  onDelete={() => handleDeleteWithToast(task.id)}
                 />
               ))
             )}
@@ -324,6 +425,16 @@ function Mypage() {
           </div>
         </div>
       </div>
+
+      {showToast && (
+        <div
+          className={`toast ${
+            toastText.includes("削除") ? "toast-delete" : "success-toast"
+          } ${isFadingOut ? "hide" : ""}`}
+        >
+          {toastText}
+        </div>
+      )}
     </div>
   );
 }

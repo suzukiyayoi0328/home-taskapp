@@ -12,6 +12,7 @@ function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+
   const [formError, setFormError] = useState("");
 
   const EyeIcon = () => (
@@ -68,7 +69,7 @@ function Register() {
     }
 
     if (password !== confirmPassword) {
-      setPasswordError("パスワードが一致しません！");
+      setPasswordError("パスワードが一致しません");
       return;
     }
 
@@ -85,7 +86,16 @@ function Register() {
       });
 
       console.log("登録成功！", response.data);
-      alert("ユーザー登録が完了しました！");
+
+      const loginRes = await axios.post("http://localhost:3001/api/login", {
+        email,
+        password,
+      });
+
+      const token = loginRes.data.token;
+      localStorage.setItem("token", token);
+
+      localStorage.setItem("registerSuccess", "true");
       navigate("/");
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {

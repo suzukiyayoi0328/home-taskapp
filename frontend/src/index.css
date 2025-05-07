@@ -24,9 +24,9 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow-y: auto; /* ← これで縦スクロールが有効になる！ */
+  overflow-y: auto;
   font-family: "Noto Sans JP", sans-serif;
-  background-color: #f5f7fa; /* 背景色が共通ならここで指定してOK */
+  background-color: #f5f7fa;
 }
 
 h1 {

@@ -5,10 +5,11 @@ type Task = {
   id: number;
   title: string;
   start_time: string | null;
-  deadline: string | null; // ← これが終了時間
+  deadline: string | null;
   category: string | null;
   memo: string | null;
   is_done: number;
+  attachment_url?: string | null;
 };
 
 function TaskCard({
@@ -21,16 +22,15 @@ function TaskCard({
   onDelete: () => void;
 }) {
   const handleCheckboxChange = async () => {
-    console.log("チェックボックス押した！ 現在のis_done:", task.is_done); // 追加
     try {
       await fetch("http://localhost:3001/tasks/" + task.id, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({ is_done: task.is_done === 1 ? 0 : 1 }),
       });
-      console.log("PATCHリクエスト送信完了"); // 追加
       onStatusChange();
     } catch (err) {
       console.error("更新失敗", err);
@@ -44,6 +44,9 @@ function TaskCard({
     try {
       await fetch(`http://localhost:3001/tasks/${task.id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       onDelete();
     } catch (err) {
@@ -53,18 +56,7 @@ function TaskCard({
   };
 
   return (
-    <div
-      className={`task-card ${task.is_done === 1 ? "done" : ""}`}
-      style={{
-        position: "relative",
-        border: "1px solid #ccc",
-        padding: "1em",
-        marginBottom: "1em",
-        borderRadius: "8px",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <div className={`task-card ${task.is_done === 1 ? "done" : ""}`}>
       {/* 編集・削除ボタン */}
       <div
         style={{
@@ -83,7 +75,6 @@ function TaskCard({
         </button>
       </div>
 
-      {/* ✅ カテゴリ名とチェックボックス */}
       <div
         className="task-title"
         style={{ display: "flex", alignItems: "center" }}
@@ -97,11 +88,31 @@ function TaskCard({
         <h3 style={{ margin: 0 }}>{task.category || "カテゴリなし"}</h3>
       </div>
 
-      {/* メモ */}
       <p className="task-memo" style={{ margin: "0.5em 0", color: "#999" }}>
         {task.memo || "メモなし"}
       </p>
-      {/* 開始日時 + 終了日時 */}
+
+      {task.attachment_url && (
+        <div style={{ margin: "0.5em 0" }}>
+          <a
+            href={task.attachment_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ textDecoration: "none", fontSize: "1.5em" }}
+          >
+            {(() => {
+              const url = task.attachment_url.toLowerCase();
+              if (url.match(/\.(png|jpe?g|gif|webp)$/)) {
+                return "📷"; // 画像ファイル
+              } else if (url.endsWith(".pdf")) {
+                return "📄"; // PDF
+              } else {
+                return "📎"; // その他
+              }
+            })()}
+          </a>
+        </div>
+      )}
 
       <div
         style={{
@@ -135,7 +146,6 @@ function TaskCard({
           </p>
         </div>
 
-        {/* 残り */}
         <p style={{ margin: 0, color: "#f44336", fontWeight: "bold" }}>
           {task.deadline
             ? (() => {
@@ -148,11 +158,9 @@ function TaskCard({
                 let color = "";
 
                 if (diffMs >= 0) {
-                  // 期限内
                   text = `${diffDays}日`;
-                  color = diffDays <= 3 ? "#f44336" : "#4caf50"; // 3日以内なら赤、4日以上は黄緑
+                  color = diffDays <= 3 ? "#f44336" : "#4caf50";
                 } else {
-                  // 期限切れ
                   const absDiffMs = Math.abs(diffMs);
                   const diffHours = Math.floor(absDiffMs / (1000 * 60 * 60));
                   const diffMinutes = Math.floor(absDiffMs / (1000 * 60));
@@ -164,7 +172,7 @@ function TaskCard({
                   } else {
                     text = `${diffMinutes}分切れ`;
                   }
-                  color = "#f44336"; // 期限切れは赤
+                  color = "#f44336";
                 }
 
                 return (

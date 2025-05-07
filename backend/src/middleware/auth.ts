@@ -1,24 +1,30 @@
-export interface JwtPayload {
-  email: string;
-  userId: number; // ← userId もトークンに入ってるので追加！
-}
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = "mysecretkey"; // ✅ 共通化！
+const JWT_SECRET = "mysecretkey";
 
-export const authenticateToken = (
+// 🔸 JWTの中身の型
+export interface JwtPayload {
+  email: string;
+  id: number;
+}
+
+// 🔸 req.user を型安全に使うために拡張
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: JwtPayload;
+  }
+}
+
+const authenticateToken = (
   req: Request,
   res: Response,
   next: NextFunction
 ): void => {
-  console.log("🔥 authenticateToken 発動 in middleware/auth.ts"); // ログ確認！
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  console.log("🎫 トークン:", token);
 
   if (!token) {
-    console.log("🚫 トークン無し");
     res.status(401).json({ message: "トークンが必要です" });
     return;
   }
@@ -30,9 +36,10 @@ export const authenticateToken = (
       return;
     }
 
+    // 🔸 デコード成功 → req.user に代入
     if (typeof decoded === "object" && decoded !== null) {
-      console.log("✅ トークン認証成功:", decoded);
-      req.user = decoded as JwtPayload; // ✅ 型を断言！
+      req.user = decoded as JwtPayload;
+      console.log("✅ 認証ユーザーID:", req.user.id); // ← デバッグ用
       next();
     } else {
       console.log("❌ トークンデコード形式エラー");
@@ -40,3 +47,5 @@ export const authenticateToken = (
     }
   });
 };
+
+export default authenticateToken;

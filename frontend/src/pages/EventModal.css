@@ -90,12 +90,34 @@
   gap: 15px;
   margin-top: 20px;
 }
+.modal-backdrop .toast {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 9999;
+  background-color: #e0ffe0;
+  color: #2e7d32;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
+}
 
-/* ダークモード用 */
+.modal-backdrop .toast.toast-delete {
+  background-color: #ffe0e0;
+  color: #c62828;
+}
 
+.modal-backdrop .toast.hide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
 /* ダークモード用 */
 body.dark .modal-backdrop {
-  background: rgba(0, 0, 0, 0.7); /* 背景暗く */
+  background: rgba(0, 0, 0, 0.7);
 }
 
 body.dark .modal-content {
@@ -129,18 +151,16 @@ body.dark .modal-content button:hover {
   background-color: var(--accent-color) !important;
 }
 
-/* ダークモード用：カテゴリ選択 */
 body.dark .modal-content select {
-  background-color: #444 !important; /* 背景色 */
-  color: #fff !important; /* 文字色 */
-  border: 1px solid #555 !important; /* 枠線色 */
-  border-radius: 8px !important; /* 枠線を丸くする */
+  background-color: #444 !important;
+  color: #fff !important;
+  border: 1px solid #555 !important;
+  border-radius: 8px !important;
 }
 
-/* カテゴリカラーのプレビュー部分 */
 body.dark .modal-content .color-preview {
-  border: 1px solid #666 !important; /* 枠線色 */
-  border-radius: 50% !important; /* 丸くする */
+  border: 1px solid #666 !important;
+  border-radius: 50% !important;
 }
 
 body.dark .button-row {
@@ -159,4 +179,17 @@ body.dark .close-button:hover {
 body.dark .modal-content select option {
   background-color: #444;
   color: #fff;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.modal-content {
+  max-height: 80vh;
+  overflow-y: auto;
 }

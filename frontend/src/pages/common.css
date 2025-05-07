@@ -1,4 +1,3 @@
-/* common.css */
 :root {
   --light-bg: #f9fafb;
   --light-text: #333;
@@ -49,13 +48,11 @@ a:hover {
   text-decoration: underline;
 }
 
-/* 通常ボタンのデフォルト文字色 */
 button {
   background-color: var(--main-color);
-  color: white; /* ← ここを固定！ */
+  color: white;
 }
 
-/* ダークモードでも白文字を維持 */
 body.dark button {
   background-color: #444;
   color: var(--dark-text);

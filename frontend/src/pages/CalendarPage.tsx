@@ -19,9 +19,12 @@ const localizer = momentLocalizer(moment);
 type MyEvent = RBCEvent & {
   id: number;
   category: string;
+  category_id: number;
   category_color: string | null;
+  memo?: string;
+  attachment_url?: string | null;
+  repeat_type?: "weekly" | "monthly" | "";
 };
-
 type MySlotInfo = {
   start: Date;
   end: Date;
@@ -42,28 +45,59 @@ function CalendarPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<MySlotInfo | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<MyEvent | null>(null);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "delete">("success");
+  const [showToast, setShowToast] = useState(false);
+  const [isFadingOut, setIsFadingOut] = useState(false);
+
+  const showToastWithMessage = (msg: string, type: "success" | "delete") => {
+    setToastMessage(msg);
+    setToastType(type);
+    setShowToast(true);
+    setIsFadingOut(false);
+
+    setTimeout(() => setIsFadingOut(true), 3000);
+    setTimeout(() => {
+      setShowToast(false);
+      setIsFadingOut(false);
+    }, 4000);
+  };
 
   type TaskFromApi = {
     id: number;
     category: string | null;
+    category_id: number;
     start_time: string;
     deadline: string;
     category_color: string | null;
+    memo: string | null;
+    attachment_url?: string | null;
   };
 
   const fetchTasks = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:3001/tasks");
+      const token = localStorage.getItem("token");
+
+      const res = await fetch("http://localhost:3001/tasks", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       const data = await res.json();
-      console.log("📦 タスク一覧取得結果:", data);
+      console.log("APIから取得したデータ:", data);
 
       const formatted = data.map((task: TaskFromApi) => ({
         id: task.id,
         category: task.category || "",
+        category_id: task.category_id,
         category_color: task.category_color || null,
-        start: new Date(task.start_time), // ← ここ補正なしでOK！
+        start: new Date(task.start_time),
         end: new Date(task.deadline),
+        memo: task.memo || "",
+        attachment_url: task.attachment_url || "",
       }));
+
       setEvents(formatted);
     } catch (err) {
       console.error("タスク取得エラー:", err);
@@ -73,9 +107,14 @@ function CalendarPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("http://localhost:3001/api/categories");
+        const token = localStorage.getItem("token");
+
+        const res = await fetch("http://localhost:3001/api/categories", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const data = await res.json();
-        console.log("カテゴリ一覧:", data);
 
         setCategories(data);
       } catch (err) {
@@ -112,22 +151,30 @@ function CalendarPage() {
       : "http://localhost:3001/tasks";
 
     const method = isEdit ? "PUT" : "POST";
+    const token = localStorage.getItem("token");
 
     try {
       await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           start_time: formatDate(data.start),
           deadline: formatDate(data.end),
           category: data.category,
           memo: data.memo,
+          attachment_url: data.attachment_url ?? null,
+          repeat_type: data.repeat_type || "",
         }),
       });
+
       fetchTasks();
     } catch (err) {
       console.error("保存エラー:", err);
     }
+
     setIsModalOpen(false);
   };
 
@@ -235,7 +282,7 @@ function CalendarPage() {
               culture: string | undefined,
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               localizer: any
-            ) => localizer.format(date, "ddd", culture), // ← これだけ残す！
+            ) => localizer.format(date, "ddd", culture),
           }}
           eventPropGetter={(event: MyEvent) => ({
             style: {
@@ -249,13 +296,16 @@ function CalendarPage() {
           <EventModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
+            onShowToast={showToastWithMessage}
             initialData={
               selectedEvent
                 ? {
-                    category: selectedEvent.category,
+                    category: String(selectedEvent.category_id),
                     start: selectedEvent.start,
                     end: selectedEvent.end,
-                    memo: "",
+                    memo: selectedEvent.memo || "",
+                    repeat_type: selectedEvent.repeat_type || "",
+                    attachment_url: selectedEvent.attachment_url || "",
                   }
                 : selectedSlot
                 ? {
@@ -274,6 +324,15 @@ function CalendarPage() {
           />
         )}
       </div>
+      {showToast && (
+        <div
+          className={`toast ${toastType === "delete" ? "toast-delete" : ""} ${
+            isFadingOut ? "hide" : ""
+          }`}
+        >
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
 }

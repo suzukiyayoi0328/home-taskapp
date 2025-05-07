@@ -1,6 +1,6 @@
-import { useState } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -8,6 +8,8 @@ function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState("");
+  const [showToast, setShowToast] = useState(false);
+  const [isFadingOut, setIsFadingOut] = useState(false);
 
   const EyeIcon = () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -33,6 +35,21 @@ function Login() {
     </svg>
   );
 
+  useEffect(() => {
+    const successFlag = localStorage.getItem("registerSuccess");
+    if (successFlag === "true") {
+      setShowToast(true);
+      setIsFadingOut(false);
+
+      setTimeout(() => setIsFadingOut(true), 3000);
+      setTimeout(() => {
+        setShowToast(false);
+        setIsFadingOut(false);
+        localStorage.removeItem("registerSuccess");
+      }, 4000);
+    }
+  }, []);
+
   const handleLogin = async () => {
     try {
       const response = await fetch("http://localhost:3001/api/login", {
@@ -44,19 +61,18 @@ function Login() {
       });
 
       if (!response.ok) {
-        throw new Error("ログインに失敗しました");
+        throw new Error();
       }
 
       const data = await response.json();
-      console.log("ログイン成功！トークン:", data.token);
       localStorage.setItem("token", data.token);
+      localStorage.setItem("loginSuccess", "true");
       navigate("/mypage");
-      setLoginError("");
-    } catch (error) {
-      console.error("ログインエラー:", error);
-      setLoginError("ユーザー名またはパスワードが違います");
+    } catch {
+      setLoginError("メールアドレスまたはパスワードが違います");
     }
   };
+
   return (
     <div className="login-page">
       <div className="login-card">
@@ -107,6 +123,11 @@ function Login() {
           ですぐにご利用いただけます。
         </p>
       </div>
+      {showToast && (
+        <div className={`toast ${isFadingOut ? "hide" : ""}`}>
+          ユーザー登録が完了しました！ログインしてください
+        </div>
+      )}
     </div>
   );
 }

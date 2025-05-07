@@ -1,16 +1,15 @@
 .task-card {
   width: 100%;
-  max-width: 340px; /* 横幅を制限 */
-  padding: 16px 24px; /* 上下16px、左右24pxのパディング */
+  max-width: 340px;
+  padding: 16px 24px;
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin: 0 auto 20px auto; /* 下に余白 */
-  box-sizing: border-box; /* パディング含めて幅計算 */
-  position: relative; /* 編集ボタンを右上に配置する用 */
+  margin: 0 auto 20px auto;
+  box-sizing: border-box;
+  position: relative;
 }
 
-/* 共通ボタンスタイル */
 .task-card .task-edit-button,
 .task-card .task-delete-button {
   position: absolute;
@@ -51,7 +50,6 @@
   padding-bottom: 4px;
 }
 
-/* メモ */
 .task-memo {
   border-bottom: 1px solid #ddd;
   padding-bottom: 4px;
@@ -62,11 +60,28 @@
   color: #666;
 }
 
-/* 日時 */
 .task-datetime {
   font-size: 14px;
   color: #6de996;
   margin: 0;
+}
+
+.task-columns {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.mypage-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.task-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 body.dark .task-card {
@@ -98,10 +113,18 @@ body.dark .common-icon-button:hover {
 }
 
 .task-card.done {
-  background-color: #3a3a3a25; /* 薄いグレー背景 */
+  background-color: #e7e7e7;
+  padding: 16px 24px;
+  margin: 0 auto 20px auto;
+  border-radius: 12px;
+  box-sizing: border-box;
 }
 
-/* ダークモードでも調整 */
+/* ダークモード */
 body.dark .task-card.done {
-  background-color: #555; /* ダーク時は濃いグレー */
+  background-color: #555;
+  padding: 16px 24px;
+  margin: 0 auto 20px auto;
+  border-radius: 12px;
+  box-sizing: border-box;
 }

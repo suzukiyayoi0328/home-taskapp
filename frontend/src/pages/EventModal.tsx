@@ -5,7 +5,9 @@ type EventData = {
   category: string;
   start: Date;
   end: Date;
-  memo: string;
+  memo: string | null;
+  attachment_url?: string | null;
+  repeat_type?: "weekly" | "monthly" | "";
 };
 
 type Category = {
@@ -21,8 +23,8 @@ type EventModalProps = {
   onDelete?: () => void;
   initialData?: EventData;
   categories: Category[];
+  onShowToast: (message: string, type: "success" | "delete") => void;
 };
-
 const EventModal: React.FC<EventModalProps> = ({
   isOpen,
   onClose,
@@ -30,20 +32,39 @@ const EventModal: React.FC<EventModalProps> = ({
   onDelete,
   initialData,
   categories,
+  onShowToast,
 }) => {
-  const [categoryId, setCategoryId] = useState<number | "">("");
+  const [categoryId, setCategoryId] = useState<number | null>(null);
+
   const [start, setStart] = useState<Date | null>(null);
   const [end, setEnd] = useState<Date | null>(null);
   const [memo, setMemo] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [repeatType, setRepeatType] = useState<"weekly" | "monthly" | "">("");
+  const [uploadedFiles, setUploadedFiles] = useState<
+    { name: string; url: string; type: string }[]
+  >([]);
+
+  const isEdit = !!initialData;
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedCategoryId = Number(e.target.value);
-    const category = categories.find((c) => c.id === selectedCategoryId);
-    setCategoryId(selectedCategoryId);
-    setSelectedColor(category ? category.category_color : null);
-  };
+    const selected = e.target.value;
 
+    if (selected === "") {
+      setCategoryId(null);
+      setSelectedColor(null);
+    } else {
+      const selectedCategoryId = Number(selected);
+
+      const category = categories.find(
+        (c) => Number(c.id) === selectedCategoryId
+      );
+
+      setCategoryId(selectedCategoryId);
+      setSelectedColor(category ? category.category_color : null);
+    }
+  };
   const formatDateTimeLocal = (date: Date) => {
     const offsetDate = new Date(
       date.getTime() - date.getTimezoneOffset() * 60000
@@ -51,52 +72,115 @@ const EventModal: React.FC<EventModalProps> = ({
     return offsetDate.toISOString().slice(0, 16);
   };
 
-  // memo初期化
   useEffect(() => {
-    if (initialData) {
-      const categoryObj = categories.find(
-        (c) => c.name === initialData.category
-      );
-      setCategoryId(categoryObj ? categoryObj.id : "");
-      setSelectedColor(categoryObj ? categoryObj.category_color : null);
-      setStart(initialData.start);
-      setEnd(initialData.end);
+    if (initialData && categories.length > 0) {
+      //カテゴリ名 or ID の両方に対応
+      const categoryObj =
+        categories.find((c) => String(c.id) === initialData.category) ||
+        categories.find((c) => c.name === initialData.category);
+
+      if (categoryObj) {
+        setCategoryId(categoryObj.id);
+        setSelectedColor(categoryObj.category_color || null);
+      } else {
+        setCategoryId(null);
+        setSelectedColor(null);
+      }
+
+      setStart(new Date(initialData.start));
+      setEnd(new Date(initialData.end));
       setMemo(initialData.memo || "");
-    } else {
-      setCategoryId("");
-      setSelectedColor(null);
-      setStart(null);
-      setEnd(null);
-      setMemo("");
+      setRepeatType(initialData.repeat_type || "");
+
+      if (initialData.attachment_url) {
+        const urls = initialData.attachment_url.split(",");
+        const initialFiles = urls.map((url: string) => ({
+          name: url.split("/").pop() || "ファイル",
+          url,
+          type: /\.(png|jpe?g|gif|webp)$/i.test(url)
+            ? "image/*"
+            : "application/octet-stream",
+        }));
+        setUploadedFiles(initialFiles);
+      }
     }
   }, [initialData, categories]);
 
-  const handleSave = () => {
-    if (!start || !end || categoryId === "") {
-      alert("カテゴリ、開始日時、終了日時は必須です！");
+  const handleSave = async () => {
+    if (!start) {
+      setErrorMessage("開始日時は必須です。");
       return;
     }
 
-    const categoryName =
-      categories.find((c) => c.id === categoryId)?.name || "";
+    if (!end) {
+      setErrorMessage("終了日時は必須です。");
+      return;
+    }
 
-    onSave({
-      category: categoryName,
-      start,
-      end,
-      memo,
+    if (start >= end) {
+      setErrorMessage("開始日時は終了日時より前に設定してください。");
+      return;
+    }
+
+    if (!categoryId || isNaN(Number(categoryId))) {
+      setErrorMessage("カテゴリは必須です。");
+      return;
+    }
+
+    setErrorMessage("");
+
+    const repeatCount = repeatType ? 4 : 1;
+
+    const createPayload = (s: Date, e: Date) => ({
+      category: String(categoryId),
+      start: s,
+      end: e,
+      memo: memo.trim() === "" ? null : memo.trim(),
+      attachment_url: uploadedFiles.map((f) => f.url).join(","),
+      repeat_type: repeatType,
     });
+
+    for (let i = 0; i < repeatCount; i++) {
+      const s = new Date(start);
+      const e = new Date(end);
+
+      if (repeatType === "weekly") {
+        s.setDate(s.getDate() + i * 7);
+        e.setDate(e.getDate() + i * 7);
+      } else if (repeatType === "monthly") {
+        s.setMonth(s.getMonth() + i);
+        e.setMonth(e.getMonth() + i);
+      }
+
+      onSave(createPayload(s, e));
+    }
+
+    onShowToast(
+      isEdit
+        ? "予定を更新しました！"
+        : repeatType
+        ? "繰り返し予定を追加しました！"
+        : "予定を追加しました！",
+      "success"
+    );
+
     onClose();
+  };
+
+  const handleDeleteClick = () => {
+    if (onDelete) {
+      onDelete();
+      onShowToast("予定を削除しました！", "delete");
+      onClose();
+    }
   };
 
   return (
     <>
-      {/* 戻るボタン（画面左上固定） */}
       <div className="back-button">
         <a href="/mypage">← マイページ</a>
       </div>
 
-      {/* モーダル本体 */}
       {isOpen && (
         <div className="modal-backdrop">
           <div className="modal-content">
@@ -106,10 +190,9 @@ const EventModal: React.FC<EventModalProps> = ({
               <label>カテゴリ</label>
               <div className="category-row">
                 <select
-                  value={categoryId}
+                  value={categoryId !== null ? String(categoryId) : ""}
                   onChange={handleCategoryChange}
                   className="category-select"
-                  required
                 >
                   <option value="">選択してください</option>
                   {categories.map((c) => (
@@ -120,22 +203,91 @@ const EventModal: React.FC<EventModalProps> = ({
                 </select>
                 <div
                   className="color-preview"
-                  style={{
-                    backgroundColor: selectedColor || "transparent",
-                  }}
+                  style={{ backgroundColor: selectedColor || "transparent" }}
                 ></div>
               </div>
             </div>
 
             <div className="form-group">
-              <label htmlFor="memo">メモ</label>
+              <label>メモ</label>
               <textarea
-                id="memo"
                 value={memo}
                 onChange={(e) => setMemo(e.target.value)}
-                placeholder="メモを入力してください"
                 rows={4}
               />
+            </div>
+
+            <div className="form-group">
+              <label>ファイルを添付</label>
+              <input
+                type="file"
+                multiple
+                onChange={async (e) => {
+                  const files = e.target.files;
+                  if (!files) return;
+
+                  const newFiles: {
+                    name: string;
+                    url: string;
+                    type: string;
+                  }[] = [];
+
+                  for (const file of files) {
+                    const formData = new FormData();
+                    formData.append("file", file);
+
+                    try {
+                      const res = await fetch(
+                        "http://localhost:3001/api/upload",
+                        {
+                          method: "POST",
+                          body: formData,
+                          headers: {
+                            Authorization:
+                              "Bearer " + localStorage.getItem("token"),
+                          },
+                        }
+                      );
+                      const data = await res.json();
+
+                      if (data.success && data.data?.url) {
+                        newFiles.push({
+                          name: file.name,
+                          url: data.data.url,
+                          type: file.type,
+                        });
+                      }
+                    } catch (err) {
+                      console.error("アップロードエラー:", err);
+                    }
+                  }
+
+                  setUploadedFiles((prev) => [...prev, ...newFiles]);
+                }}
+              />
+              {uploadedFiles.length > 0 && (
+                <div className="file-preview-area">
+                  {uploadedFiles.map((file, index) => (
+                    <div key={index} className="file-preview">
+                      {file.type.startsWith("image/") ? (
+                        <img
+                          src={file.url}
+                          alt="preview"
+                          className="preview-image"
+                        />
+                      ) : (
+                        <a
+                          href={file.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {file.name} を添付しました
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="form-group">
@@ -156,9 +308,30 @@ const EventModal: React.FC<EventModalProps> = ({
               />
             </div>
 
+            {errorMessage && (
+              <div className="error-message">{errorMessage}</div>
+            )}
+
+            <div className="form-group">
+              <label>繰り返し</label>
+              <select
+                value={repeatType}
+                onChange={(e) =>
+                  setRepeatType(e.target.value as "weekly" | "monthly" | "")
+                }
+                className="repeat-select"
+              >
+                <option value="">なし</option>
+                <option value="weekly">毎週</option>
+                <option value="monthly">毎月</option>
+              </select>
+            </div>
+
             <div className="button-row">
-              <button onClick={handleSave}>保存</button>
-              {onDelete && <button onClick={onDelete}>削除</button>}
+              <button onClick={handleSave}>{isEdit ? "保存" : "追加"}</button>
+              {isEdit && onDelete && (
+                <button onClick={handleDeleteClick}>削除</button>
+              )}
               <button onClick={onClose}>キャンセル</button>
             </div>
           </div>

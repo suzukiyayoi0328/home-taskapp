@@ -52,7 +52,7 @@
 }
 
 .category-edit-card .delete-button:hover {
-  background-color: #e20a0a; /* 濃い赤！ */
+  background-color: #e20a0a;
 }
 
 .color-palette {
@@ -81,7 +81,7 @@
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   text-align: center;
-  margin: 0 auto; /* ← 追加！（中央寄せ保険）*/
+  margin: 0 auto;
 }
 
 .category-edit-card {
@@ -93,11 +93,34 @@
   text-align: center;
 }
 
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: #e0ffe0;
+  color: #2e7d32;
+  padding: 8px 14px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  opacity: 1;
+  font-size: 14px;
+  transition: opacity 1s ease-in-out;
+  z-index: 9999;
+}
+
+.toast.hide {
+  opacity: 0;
+}
+
+.toast.toast-delete {
+  background-color: #ffe0e0;
+  color: #c62828;
+}
+
 body.dark .category-edit-card {
   background-color: #333;
 }
 
-/* iPad 用だけ少し上寄せ */
 @media (min-width: 768px) and (max-width: 1024px) {
   .category-edit-page {
     align-items: flex-start;
@@ -107,8 +130,8 @@ body.dark .category-edit-card {
 
 @media (min-width: 1025px) {
   .category-edit-page {
-    align-items: flex-start; /* ← 上寄せにして */
-    padding-top: 100px; /* ← 下げる！好きな値で調整してOK */
+    align-items: flex-start;
+    padding-top: 100px;
     padding-bottom: 100px;
   }
 }

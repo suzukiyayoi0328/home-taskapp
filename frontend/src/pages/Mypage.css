@@ -56,10 +56,6 @@ body {
   padding: 40px 20px;
   font-family: "Noto Sans JP", sans-serif;
   color: #333;
-  .mypage-container {
-    background-color: #ffca39; /* ← ここ */
-    color: var(--text-color); /* ← ここ */
-  }
 
   /* ← 追加 */
   min-height: 100vh;
@@ -172,22 +168,22 @@ body {
   background: white;
   border-radius: 16px;
   padding: 20px;
-  width: 100%; /* ← カレンダー全体の幅を調整 */
-  max-width: 1000px; /* ← 最大幅も設定しとくと安心！ */
+  width: 100%;
+  max-width: 1000px;
   height: auto;
-  position: relative; /* ← 閉じるボタンを配置するため！ */
+  position: relative;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  margin: 50px auto; /* 上下中央寄せ */
+  margin: 50px auto;
 }
 
 .calendar-modal-content .rbc-calendar {
-  height: 400px; /* ← カレンダーの高さを調整！ */
+  height: 400px;
 }
 
 .close-button {
-  position: sticky; /* ← 固定したい場合 sticky を使う！ */
-  top: 20px; /* ← 上から20px */
-  left: 20px; /* ← 左から20px */
+  position: sticky;
+  top: 20px;
+  left: 20px;
   background-color: #ffca39;
   color: white;
   font-size: 14px;
@@ -197,7 +193,7 @@ body {
   padding: 10px 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  z-index: 10; /* ← 前面に出す！ */
+  z-index: 10;
 }
 
 .close-button:hover {
@@ -205,90 +201,88 @@ body {
 }
 
 .calendar-modal-content .rbc-calendar {
-  height: 300px !important; /* ← 強制的に縮める！ */
-  max-width: 400px !important; /* 幅も縮める */
+  height: 300px !important;
+  max-width: 400px !important;
   margin: 0 auto;
 }
 
 .calendar-modal-content .rbc-time-view,
 .calendar-modal-content .rbc-month-view {
-  height: 250px !important; /* ← ビューごとに強制縮小！ */
+  height: 250px !important;
 }
 
 .calendar-modal-content .rbc-timeslot-group {
-  min-height: 5px !important; /* 最小高さを5pxにする */
-  height: 5px !important; /* 通常高さも5pxにする */
+  min-height: 5px !important;
+  height: 5px !important;
 }
 
 .calendar-modal-content .rbc-time-slot {
-  min-height: 10px !important; /* ← ここをもっと小さく */
-  height: 10px !important; /* ← 必要なら height も指定！ */
-  line-height: 10px !important; /* ← テキストの高さも揃える */
+  min-height: 10px !important;
+  height: 10px !important;
+  line-height: 10px !important;
 }
 
 .calendar-modal-content .rbc-calendar {
-  width: auto !important; /* ← 横幅自動調整 */
+  width: auto !important;
 }
 .calendar-modal-content .rbc-time-view {
-  max-width: 600px !important; /* ← カレンダーの横幅を縮める！ */
-  margin: 0 auto; /* ← 中央寄せ */
+  max-width: 600px !important;
+  margin: 0 auto;
 }
 
 .calendar-modal-content .rbc-time-header,
 .calendar-modal-content .rbc-time-content {
-  width: 100% !important; /* ← 各部分の横幅も100%に揃える！ */
-}
-/* ツールバー全体のレイアウトをカスタム */
-.calendar-modal-content .rbc-toolbar {
-  display: flex;
-  flex-direction: column; /* ← 縦並びにする！ */
-  align-items: center; /* ← 中央寄せ */
-  margin: 5px 0;
-  margin-bottom: 0; /* 下の余白減らす */
-  padding: 4px 0; /* 上下の余白を減らす */
-  row-gap: 4px; /* 縦の隙間も縮める（flexの間隔） */
+  width: 100% !important;
 }
 
-/* 上側のボタン（Today / Back / Next） */
+.calendar-modal-content .rbc-toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 5px 0;
+  margin-bottom: 0;
+  padding: 4px 0;
+  row-gap: 4px;
+}
+
 .calendar-modal-content .rbc-toolbar .rbc-toolbar-navigation {
-  order: -1; /* ← 上に持ってくる！ */
+  order: -1;
   margin-bottom: 0;
 }
 
-/* 下側のボタン（Month / Week / Day） */
 .calendar-modal-content .rbc-toolbar .rbc-btn-group:last-of-type {
   margin-top: 0px;
 }
 
 .rbc-toolbar button:hover {
-  color: white !important; /* ← 優先度で勝つために !important を付ける */
+  color: white !important;
 }
 
 .gear-icon svg {
-  fill: #ffca39 !important; /* ← オレンジ系に変更！ */
+  fill: #ffca39 !important;
   transition: fill 0.3s ease;
 }
 
 .gear-icon:hover svg {
-  fill: #ff9800; /* ← ホバー時はちょっと濃いオレンジに！ */
+  fill: #ff9800;
 }
 
 .delete-all-button {
   background-color: #ffca39;
-  border: none; /* ← ボーダー消す */
+  border: none;
   border-radius: 50%;
   padding: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  width: 40px; /* ← ボタンの大きさ固定 */
-  height: 40px; /* ← ボタンの大きさ固定 */
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .delete-all-button .emoji {
-  font-size: 24px; /* ← 絵文字だけ大きくする */
+  font-size: 24px;
 }
 
 .delete-all-button:hover {
@@ -296,21 +290,18 @@ body {
 
   color: white;
 }
+
 .task-column-header {
   display: flex;
-  align-items: center; /* ← 縦方向の中央揃え */
-  justify-content: space-between; /* ← 左右に配置 */
-  margin-bottom: 26px; /* ← 下の余白 */
-}
-
-.task-column-header h3 {
-  margin: 0; /* ← デフォルトのマージン消す */
+  align-items: center;
+  justify-content: space-between;
+  height: 65px;
 }
 
 .calendar-add-button {
-  position: sticky; /* ← スクロール時に固定 */
-  top: 20px; /* 上からの距離 */
-  float: right; /* 右寄せ */
+  position: sticky;
+  top: 20px;
+  float: right;
   padding: 10px 16px;
   font-size: 14px;
   background-color: #ffca39;
@@ -319,7 +310,7 @@ body {
   border-radius: 9999px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  z-index: 10; /* モーダル内で前面に */
+  z-index: 10;
   font-weight: 600;
 }
 
@@ -327,35 +318,32 @@ body {
   background-color: #ff9800;
 }
 
-/* カレンダーのツールバーのボタンスタイル */
 .rbc-toolbar button {
-  background-color: #ffca39 !important; /* 通常時の背景色 */
-  color: white !important; /* 通常時の文字色 */
+  background-color: #ffca39 !important;
+  color: white !important;
   border: none !important;
   box-shadow: none !important;
   transition: background-color 0.3s ease;
 }
 
-/* ホバー時 */
 .rbc-toolbar button:hover {
-  background-color: #ff9800 !important; /* ホバー時の背景色 */
-  color: white !important; /* ホバー時の文字色 */
+  background-color: #ff9800 !important;
+  color: white !important;
 }
 
-/* アクティブ時（クリック中 or 選択中） */
 .rbc-toolbar button:active,
 .rbc-toolbar button.rbc-active {
-  background-color: #ff9800 !important; /* アクティブ時もオレンジ */
+  background-color: #ff9800 !important;
   color: white !important;
-  box-shadow: none !important; /* デフォのinset影を消す */
+  box-shadow: none !important;
 }
 
 .remaining-tasks {
   display: block;
   padding: 6px 12px;
-  background-color: #ffe1ba; /* 明るいオレンジ背景 */
-  color: #fd3232; /* 文字色は濃いめで見やすく */
-  border-radius: 9999px; /* 角丸 */
+  background-color: #ffe1ba;
+  color: #fd3232;
+  border-radius: 9999px;
   font-weight: bold;
   width: fit-content;
   margin-top: 10px auto;
@@ -393,13 +381,59 @@ button {
   --text-color: var(--light-text);
 }
 
+.toast.success-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: #e0ffe0;
+  color: #2e7d32;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 1s ease-in-out;
+  z-index: 9999;
+}
+
+.toast.success-toast.hide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: all 1s ease;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 9999;
+  background-color: #e0ffe0;
+  color: #2e7d32;
+  padding: 10px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  transition: opacity 1s ease-in-out;
+}
+
+.toast.toast-delete {
+  background-color: #ffe0e0;
+  color: #c62828;
+}
+
+.toast.hide {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
 /* ダークモード用 */
 body.dark {
   background-color: var(--dark-bg);
   color: var(--dark-text);
 }
 
-/* ボタン */
 button {
   padding: 12px;
   border: none;
@@ -416,7 +450,6 @@ body.dark button {
   color: var(--dark-text);
 }
 
-/* タスクカード */
 .task-card {
   background-color: var(--bg-color);
   color: var(--text-color);
@@ -427,7 +460,6 @@ body.dark .task-card {
   color: var(--dark-text);
 }
 
-/* カレンダー */
 .calendar-modal-content {
   background-color: var(--bg-color);
   color: var(--text-color);
@@ -438,7 +470,6 @@ body.dark .calendar-modal-content {
   color: #fff;
 }
 
-/* その他のカスタムスタイル */
 .gear-icon svg {
   fill: var(--main-color);
 }
@@ -488,73 +519,64 @@ body {
   padding: 0;
 }
 
-/* ダークモード時も背景色を固定 */
 body.dark {
   background-color: #272727 !important;
 }
 
 @media (max-width: 480px) {
   .login-card {
-    width: 90%; /* カードの横幅を広げる（画面幅の90%） */
-    padding: 32px 20px; /* パディングも少し小さく */
+    width: 90%;
+    padding: 32px 20px;
   }
 
   .login-title {
-    font-size: 22px; /* タイトル文字サイズダウン */
+    font-size: 22px;
   }
 
   .form-group input {
-    font-size: 14px; /* 入力欄の文字サイズも小さく */
-    padding: 12px 14px; /* 余白調整 */
+    font-size: 14px;
+    padding: 12px 14px;
   }
 
   .submit-button {
-    width: 100%; /* ボタンを横いっぱいに */
+    width: 100%;
   }
 
   .form-footer {
-    font-size: 12px; /* 案内文も少し小さく */
+    font-size: 12px;
   }
 }
 
 @media (max-width: 480px) {
   .mypage-container {
-    padding: 20px 10px; /* パディングを縮める */
+    padding: 20px 10px;
   }
 
   .user-greeting {
-    font-size: 16px; /* あいさつ文も小さく */
+    font-size: 16px;
   }
 
   .task-columns {
-    flex-direction: column; /* 2列 → 1列に */
-    gap: 10px; /* 間隔を縮める */
+    flex-direction: column;
+    gap: 10px;
   }
 
   .task-card {
-    width: 100%; /* カードを横いっぱいに */
+    width: 100%;
   }
 
   .task-button {
-    width: 100%; /* ボタンも横いっぱいに */
+    width: 100%;
   }
 
   .gear-icon {
-    top: 10px; /* さらに上にあげる */
-    left: 10px; /* 左も少し詰める */
-    width: 36px; /* アイコンを小さく */
+    top: 10px;
+    left: 10px;
+    width: 36px;
     height: 36px;
   }
 
   .mypage-title {
-    margin-top: 40px; /* タイトルに余白追加（アイコン分） */
+    margin-top: 40px;
   }
-}
-
-.task-column-header {
-  display: flex;
-  align-items: center; /* ← 縦方向中央寄せ */
-  justify-content: space-between; /* ← 左右に配置 */
-  margin-bottom: 26px; /* ← 下の余白 */
-  height: 65px; /* ← 高さを揃える！お好みで調整してOK */
 }
