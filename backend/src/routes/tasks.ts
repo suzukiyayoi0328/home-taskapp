@@ -68,6 +68,7 @@ router.get("/:id", authenticateToken, (req: any, res: any) => {
 
 // ✅ タスク追加
 router.post("/", authenticateToken, (req: any, res: any) => {
+  console.log("受け取ったデータ:", req.body);
   const { start_time, deadline, category, memo, attachment_url, repeat_type } =
     req.body;
   const userId = req.user.id;

@@ -64,6 +64,8 @@ function AddTask() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const token = localStorage.getItem("token");
+
     if (!startTime) {
       setErrorMessage("開始日時を入力してください。");
       return;
@@ -115,11 +117,19 @@ function AddTask() {
           }
 
           const payload = createPayload(start, end);
-          await axios.post("http://localhost:3001/tasks", payload);
+          await axios.post("http://localhost:3001/tasks", payload, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
         }
       } else {
         const payload = createPayload(baseStart, baseEnd);
-        await axios.post("http://localhost:3001/tasks", payload);
+        await axios.post("http://localhost:3001/tasks", payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       }
 
       localStorage.setItem("taskAdded", "true");
