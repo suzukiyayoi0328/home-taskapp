@@ -1,10 +1,11 @@
-import mysql from "mysql2";
+import { Pool } from "pg";
+import dotenv from "dotenv";
 
-export const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "password",
-  database: "home_task_app",
+dotenv.config();
+
+export const db = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }, // Render用
 });
 
 db.connect((err) => {
