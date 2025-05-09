@@ -1,215 +1,97 @@
 import express from "express";
 import { db } from "../db";
-import { RowDataPacket, ResultSetHeader } from "mysql2";
 import authenticateToken from "../middleware/auth";
 
 const router = express.Router();
 
-// ✅ タスク一覧取得
-router.get("/", authenticateToken, (req: any, res: any) => {
-  console.log("認証ユーザーID:", req.user.id);
-
+// ✅ カテゴリ追加（users202504171_id追加）
+router.post("/", authenticateToken, async (req: any, res: any) => {
+  const { name, category_color } = req.body;
   const userId = req.user.id;
 
-  const sql = `
-    SELECT 
-      tasks20250418.id,
-      tasks20250418.start_time,
-      tasks20250418.deadline,
-      tasks20250418.category AS category_id,
-      categories.name AS category,
-      categories.color AS category_color,
-      tasks20250418.is_done,
-      tasks20250418.memo,
-      tasks20250418.attachment_url,
-      tasks20250418.repeat_type
-    FROM 
-      tasks20250418
-    LEFT JOIN 
-      categories ON tasks20250418.category = categories.id 
-    WHERE 
-      tasks20250418.users202504171_id = ?
-  `;
+  if (!name || name.trim() === "") {
+    return res.status(400).json({ message: "カテゴリ名は必須です" });
+  }
 
-  db.query(sql, [userId], (err, results) => {
-    if (err) {
-      console.error("タスク取得失敗:", err);
-      return res.status(500).json({ message: "タスクの取得に失敗しました" });
-    }
-
-    const rows = results as RowDataPacket[];
-    res.json(rows);
-  });
-});
-
-// ✅ タスク1件取得（GET /tasks/:id）
-router.get("/:id", authenticateToken, (req: any, res: any) => {
-  const taskId = req.params.id;
-  const userId = req.user.id;
-
-  const sql = `
-    SELECT * FROM tasks20250418
-    WHERE id = ? AND users202504171_id = ?
-  `;
-
-  db.query(sql, [taskId, userId], (err, results) => {
-    if (err) {
-      console.error("タスク取得失敗:", err);
-      return res.status(500).json({ message: "タスクの取得に失敗しました" });
-    }
-
-    if ((results as RowDataPacket[]).length === 0) {
-      return res.status(404).json({ message: "タスクが見つかりません" });
-    }
-
-    res.json((results as RowDataPacket[])[0]);
-  });
-});
-
-// ✅ タスク追加
-router.post("/", authenticateToken, (req: any, res: any) => {
-  const { start_time, deadline, category, memo, attachment_url, repeat_type } =
-    req.body;
-  const userId = req.user.id;
-
-  const sql = `
-    INSERT INTO tasks20250418 
-    (start_time, deadline, category, memo, attachment_url, repeat_type, users202504171_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `;
-
-  db.query(
-    sql,
-    [start_time, deadline, category, memo, attachment_url, repeat_type, userId],
-    (err, result) => {
-      if (err) {
-        console.error("タスク追加失敗:", err);
-        return res.status(500).json({ message: "タスクの追加に失敗しました" });
-      }
-
-      const insertResult = result as ResultSetHeader;
-      res.status(201).json({ id: insertResult.insertId });
-    }
-  );
-});
-
-// ✅ 繰り返しグループ削除（POST /tasks/repeat-group/delete）
-router.post("/repeat-group/delete", authenticateToken, (req: any, res: any) => {
-  const { category, memo, repeat_type } = req.body;
-  const userId = req.user.id;
-
-  const sql = `
-    DELETE FROM tasks20250418
-    WHERE category = ? AND users202504171_id = ? AND repeat_type = ?
-    AND (memo = ? OR memo IS NULL AND ? IS NULL)
-  `;
-
-  db.query(sql, [category, userId, repeat_type, memo, memo], (err, result) => {
-    if (err) {
-      console.error("繰り返し削除失敗:", err);
-      return res.status(500).json({ message: "繰り返し削除に失敗しました" });
-    }
-
-    res.json({ message: "繰り返し削除成功" });
-  });
-});
-// 🔧 ステータス変更API（PATCH）
-router.patch("/:id", authenticateToken, (req: any, res: any) => {
-  const taskId = req.params.id;
-  const { is_done } = req.body;
-  const userId = req.user.id;
-
-  const sql = `
-    UPDATE tasks20250418
-    SET is_done = ?
-    WHERE id = ? AND users202504171_id = ?
-  `;
-
-  db.query(sql, [is_done, taskId, userId], (err) => {
-    if (err) {
-      console.error("ステータス更新失敗:", err);
-      return res.status(500).json({ message: "更新に失敗しました" });
-    }
-
-    res.json({ message: "ステータス更新成功" });
-  });
-});
-
-// ✅ タスク更新
-router.put("/:id", authenticateToken, (req: any, res: any) => {
-  const taskId = req.params.id;
-  const { start_time, deadline, category, memo, attachment_url, repeat_type } =
-    req.body;
-  const userId = req.user.id;
-
-  const sql = `
-    UPDATE tasks20250418
-    SET start_time = ?, deadline = ?, category = ?, memo = ?, attachment_url = ?, repeat_type = ?
-    WHERE id = ? AND users202504171_id = ?
-  `;
-
-  db.query(
-    sql,
-    [
-      start_time,
-      deadline,
-      category,
-      memo,
-      attachment_url,
-      repeat_type,
-      taskId,
+  try {
+    const sql = `
+      INSERT INTO categories (name, color, users202504171_id)
+      VALUES ($1, $2, $3)
+      RETURNING id
+    `;
+    const result = await db.query(sql, [
+      name,
+      category_color || "#000000",
       userId,
-    ],
-    (err) => {
-      if (err) {
-        console.error("タスク更新失敗:", err);
-        return res.status(500).json({ message: "タスクの更新に失敗しました" });
-      }
-
-      res.json({ message: "タスク更新成功" });
-    }
-  );
+    ]);
+    res.status(201).json({
+      message: "カテゴリ追加成功！",
+      categoryId: result.rows[0].id,
+    });
+  } catch (err) {
+    console.error("カテゴリ追加失敗:", err);
+    res.status(500).json({ message: "カテゴリの追加に失敗しました" });
+  }
 });
 
-// ✅ 完了済みタスク全削除（DELETE /tasks/completed）←順番ここが大事！
-router.delete("/completed", authenticateToken, (req: any, res: any) => {
+// ✅ カテゴリ一覧（共通カテゴリも含む）
+router.get("/", authenticateToken, async (req: any, res) => {
   const userId = req.user.id;
 
-  const sql = `
-    DELETE FROM tasks20250418
-    WHERE is_done = 1 AND users202504171_id = ?
-  `;
-
-  db.query(sql, [userId], (err, result) => {
-    if (err) {
-      console.error("完了タスク削除エラー:", err);
-      return res
-        .status(500)
-        .json({ message: "完了タスクの削除に失敗しました" });
-    }
-
-    res.json({ message: "完了タスクをすべて削除しました！" });
-  });
+  try {
+    const sql = `
+      SELECT id, name, color AS category_color
+      FROM categories
+      WHERE users202504171_id = $1 OR users202504171_id IS NULL
+    `;
+    const result = await db.query(sql, [userId]);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("カテゴリ取得失敗:", err);
+    res.status(500).json({ message: "カテゴリの取得に失敗しました" });
+  }
 });
 
-// ✅ タスク削除（ID指定）
-router.delete("/:id", authenticateToken, (req: any, res: any) => {
-  const taskId = req.params.id;
+// ✅ カテゴリ更新（users202504171_idも確認）
+router.put("/:id", authenticateToken, async (req: any, res: any) => {
+  const { id } = req.params;
+  const { name, category_color } = req.body;
   const userId = req.user.id;
 
-  const sql = `
-    DELETE FROM tasks20250418
-    WHERE id = ? AND users202504171_id = ?
-  `;
+  if (!name || name.trim() === "") {
+    return res.status(400).json({ message: "カテゴリ名は必須です" });
+  }
 
-  db.query(sql, [taskId, userId], (err) => {
-    if (err) {
-      console.error("タスク削除失敗:", err);
-      return res.status(500).json({ message: "タスクの削除に失敗しました" });
-    }
+  try {
+    const sql = `
+      UPDATE categories
+      SET name = $1, color = $2
+      WHERE id = $3 AND users202504171_id = $4
+    `;
+    await db.query(sql, [name, category_color || "#000000", id, userId]);
+    res.json({ message: "カテゴリ更新成功！" });
+  } catch (err) {
+    console.error("カテゴリ更新失敗:", err);
+    res.status(500).json({ message: "カテゴリの更新に失敗しました" });
+  }
+});
 
-    res.json({ message: "タスク削除成功" });
-  });
+// ✅ カテゴリ削除（users202504171_idも確認）
+router.delete("/:id", authenticateToken, async (req: any, res: any) => {
+  const { id } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const sql = `
+      DELETE FROM categories
+      WHERE id = $1 AND users202504171_id = $2
+    `;
+    await db.query(sql, [id, userId]);
+    res.json({ message: "カテゴリ削除成功！" });
+  } catch (err) {
+    console.error("カテゴリ削除失敗:", err);
+    res.status(500).json({ message: "カテゴリの削除に失敗しました" });
+  }
 });
 
 export default router;

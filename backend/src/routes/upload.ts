@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request } from "express";
 import fetch from "node-fetch";
 import multer from "multer";
 import { Buffer } from "buffer";
@@ -6,8 +6,13 @@ import { Buffer } from "buffer";
 const router = express.Router();
 const upload = multer();
 const imgbbApiKey = "46a8459452ff5cbfa27871f0f69ac118";
-// @ts-ignore
-router.post("/", upload.single("file"), async (req, res) => {
+
+// ✅ req.file の型定義を追加
+interface MulterRequest extends Request {
+  file: Express.Multer.File;
+}
+
+router.post("/", upload.single("file"), async (req: any, res: any) => {
   const file = req.file;
   if (!file) return res.status(400).json({ error: "No file uploaded" });
 

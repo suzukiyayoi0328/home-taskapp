@@ -107,3 +107,14 @@ app.post("/api/register", async (req: any, res: any) => {
 app.get("/api/protected", authenticateToken, (req: any, res: Response) => {
   res.json({ message: "これは保護されたデータです", user: req.user });
 });
+
+// ✅ DB接続確認用ルート（Renderデプロイ用）
+app.get("/api/db-check", async (req: any, res: any) => {
+  try {
+    const result = await db.query("SELECT NOW()");
+    res.json({ status: "success", time: result.rows[0].now });
+  } catch (error: any) {
+    console.error("DB接続失敗:", error);
+    res.status(500).json({ status: "error", error: error.message });
+  }
+});
