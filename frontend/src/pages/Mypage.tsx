@@ -4,9 +4,7 @@ import TaskCard from "./TaskCard";
 import "./Mypage.css";
 import gearIcon from "../assets/noun-setting-4214910.svg";
 import moment from "moment-timezone";
-import { momentLocalizer } from "react-big-calendar";
-
-import { Calendar } from "react-big-calendar";
+import { momentLocalizer, Calendar } from "react-big-calendar";
 import "moment/locale/ja";
 
 moment.locale("ja");
@@ -48,16 +46,14 @@ function Mypage() {
   const [toastText, setToastText] = useState("");
 
   useEffect(() => {
-    const taskAddedFlag = localStorage.getItem("taskAdded");
-    const taskUpdatedFlag = localStorage.getItem("taskUpdated");
-
-    if (taskAddedFlag === "true" || taskUpdatedFlag === "true") {
-      const message =
-        taskUpdatedFlag === "true"
+    const taskAdded = localStorage.getItem("taskAdded");
+    const taskUpdated = localStorage.getItem("taskUpdated");
+    if (taskAdded === "true" || taskUpdated === "true") {
+      showToastWithFade(
+        taskUpdated === "true"
           ? "タスクを更新しました！"
-          : "タスクを追加しました！";
-      showToastWithFade(message);
-
+          : "タスクを追加しました！"
+      );
       localStorage.removeItem("taskAdded");
       localStorage.removeItem("taskUpdated");
     }
@@ -69,9 +65,7 @@ function Mypage() {
       const res = await fetch(
         "https://home-taskapp-backend.onrender.com/tasks",
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       const data = await res.json();
@@ -92,58 +86,32 @@ function Mypage() {
     setToastText(text);
     setShowToast(true);
     setIsFadingOut(false);
-
     setTimeout(() => setIsFadingOut(true), 3000);
-    setTimeout(() => {
-      setShowToast(false);
-      setIsFadingOut(false);
-    }, 4000);
+    setTimeout(() => setShowToast(false), 4000);
   };
 
   const handleDeleteWithToast = async (taskId: number) => {
     try {
       await fetch(`https://home-taskapp-backend.onrender.com/tasks/${taskId}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       fetchTasks();
-
-      setToastText("タスクを削除しました！");
-      setShowToast(true);
-      setIsFadingOut(false);
-      setTimeout(() => setIsFadingOut(true), 3000);
-      setTimeout(() => {
-        setShowToast(false);
-        setIsFadingOut(false);
-      }, 4000);
+      showToastWithFade("タスクを削除しました！");
     } catch (err) {
       console.error("削除失敗", err);
       alert("削除に失敗しました");
     }
   };
 
-  useEffect(() => {
-    const loginFlag = localStorage.getItem("loginSuccess");
-    if (loginFlag === "true") {
-      showToastWithFade("ログインしました！");
-      localStorage.removeItem("loginSuccess");
-    }
-  }, []);
-
   const handleDeleteAllCompleted = async () => {
-    const confirmed = window.confirm("全ての完了したタスクを削除しますか？");
-    if (!confirmed) return;
+    if (!window.confirm("全ての完了したタスクを削除しますか？")) return;
     try {
       await fetch("https://home-taskapp-backend.onrender.com/tasks/completed", {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       fetchTasks();
-
       showToastWithFade("完了したタスクをすべて削除しました！");
     } catch (err) {
       console.error("全削除失敗", err);
@@ -161,16 +129,14 @@ function Mypage() {
         }
       );
       const data = await res.json();
-      const name = data.username ?? data.email?.split("@")[0] ?? "ユーザー";
-      setUsername(name);
+      setUsername(data.username ?? data.email?.split("@")[0] ?? "ユーザー");
     } catch (err) {
       console.error("ユーザー情報取得失敗", err);
     }
   };
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
+    if (localStorage.getItem("theme") === "dark") {
       document.body.classList.add("dark");
     } else {
       document.body.classList.remove("dark");
@@ -196,63 +162,19 @@ function Mypage() {
   if (!isAuthChecked)
     return <p className="task-empty-message">認証確認中...</p>;
 
-  const incompleteTasks = tasks
-    .filter((task) => task.is_done === 0)
-    .sort((a, b) => {
-      const dateA = a.deadline ? new Date(a.deadline).getTime() : Infinity;
-      const dateB = b.deadline ? new Date(b.deadline).getTime() : Infinity;
-      return dateA - dateB;
-    });
-
-  const completeTasks = tasks
-    .filter((task) => task.is_done === 1)
-    .sort((a, b) => {
-      const dateA = a.deadline ? new Date(a.deadline).getTime() : Infinity;
-      const dateB = b.deadline ? new Date(b.deadline).getTime() : Infinity;
-      return dateA - dateB;
-    });
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const todaysTasks = incompleteTasks.filter((task) => {
-    if (!task.deadline) return false;
-    const taskDate = new Date(task.deadline);
-    taskDate.setHours(0, 0, 0, 0);
-    return taskDate.getTime() === today.getTime();
-  });
-
-  const completeTodayTasks = completeTasks.filter((task) => {
-    if (!task.deadline) return false;
-    const taskDate = new Date(task.deadline);
-    taskDate.setHours(0, 0, 0, 0);
-    return taskDate.getTime() === today.getTime();
-  });
+  const incompleteTasks = tasks.filter((t) => t.is_done === 0);
+  const completeTasks = tasks.filter((t) => t.is_done === 1);
 
   return (
     <div style={{ height: "100vh", overflowY: "auto" }}>
       <div className="mypage-container">
         <Link to="/settings">
-          <img src={gearIcon} alt="設定アイコン" className="gear-icon" />
+          <img src={gearIcon} alt="設定" className="gear-icon" />
         </Link>
         <h1 className="mypage-title">
           {username} さん、マイページへようこそ！
         </h1>
         <p className="mypage-subtitle">今日も１日がんばりましょう！🌱🌱</p>
-        {todaysTasks.length + completeTodayTasks.length > 0 && (
-          <p className="remaining-tasks">
-            {completeTodayTasks.length ===
-            todaysTasks.length + completeTodayTasks.length
-              ? "今日のタスクはすべて完了しました 🎉"
-              : completeTodayTasks.length === 0
-              ? `今日のタスク ${
-                  todaysTasks.length + completeTodayTasks.length
-                } 件`
-              : `今日のタスク ${
-                  todaysTasks.length + completeTodayTasks.length
-                } 件中 ${completeTodayTasks.length} 件完了 🎉`}
-          </p>
-        )}
 
         <Link to="/add-task">
           <button className="submit-button">＋ タスクを追加する</button>
@@ -288,103 +210,33 @@ function Mypage() {
                   id: task.id,
                   title: task.category ?? "未分類",
                   start: task.start_time
-                    ? new Date(task.start_time)
+                    ? moment.tz(task.start_time, "Asia/Tokyo").toDate()
                     : new Date(),
-                  end: task.deadline ? new Date(task.deadline) : new Date(),
+                  end: task.deadline
+                    ? moment.tz(task.deadline, "Asia/Tokyo").toDate()
+                    : new Date(),
                   category_color: task.category_color,
                 }))}
-                /// @ts-expect-error 型が合わないので無視
-                eventPropGetter={(event: CalendarEvent) => {
-                  const backgroundColor = event.category_color || "#ffca39";
-                  return {
-                    style: {
-                      backgroundColor,
-                      color: "white",
-                      borderRadius: "8px",
-                      padding: "2px",
-                    },
-                  };
-                }}
+                // @ts-expect-error 型が合わないので無視
+                eventPropGetter={(event: CalendarEvent) => ({
+                  style: {
+                    backgroundColor: event.category_color || "#ffca39",
+                    color: "white",
+                    borderRadius: "8px",
+                    padding: "2px",
+                  },
+                })}
                 startAccessor="start"
                 endAccessor="end"
                 titleAccessor="title"
                 selectable={false}
                 views={["month", "week", "day"]}
                 view={calendarView}
-                onView={(view: "month" | "week" | "day") =>
-                  setCalendarView(view)
-                }
+                // @ts-expect-error 型が合わないので無視
+                onView={(view) => setCalendarView(view)}
                 date={calendarDate}
-                onNavigate={(newDate: Date) => setCalendarDate(newDate)}
+                onNavigate={setCalendarDate}
                 style={{ height: 500 }}
-                messages={{
-                  month: "月",
-                  week: "週",
-                  day: "日",
-                  today: "今日",
-                  previous: "前",
-                  next: "次",
-                }}
-                formats={{
-                  timeGutterFormat: (
-                    date: Date,
-                    culture: string | undefined,
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    localizer: any
-                  ) => localizer.format(date, "HH:mm", culture),
-
-                  headerFormat: (
-                    date: Date,
-                    culture: string | undefined,
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    localizer: any
-                  ) => localizer.format(date, "M月D日", culture),
-
-                  monthHeaderFormat: (
-                    date: Date,
-                    culture: string | undefined,
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    localizer: any
-                  ) => localizer.format(date, "YYYY年M月", culture),
-
-                  dayRangeHeaderFormat: (
-                    { start, end }: { start: Date; end: Date },
-                    culture: string | undefined,
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    localizer: any
-                  ) =>
-                    `${localizer.format(
-                      start,
-                      "YYYY年M月D日",
-                      culture
-                    )} - ${localizer.format(end, "YYYY年M月D日", culture)}`,
-
-                  agendaHeaderFormat: (
-                    { start, end }: { start: Date; end: Date },
-                    culture: string | undefined,
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    localizer: any
-                  ) =>
-                    `${localizer.format(
-                      start,
-                      "YYYY年M月D日",
-                      culture
-                    )} - ${localizer.format(end, "YYYY年M月D日", culture)}`,
-
-                  dayHeaderFormat: (
-                    date: Date,
-                    culture: string | undefined,
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    localizer: any
-                  ) => localizer.format(date, "YYYY年M月D日", culture),
-
-                  dayFormat: (
-                    date: Date,
-                    culture: string | undefined,
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    localizer: any
-                  ) => localizer.format(date, "ddd", culture),
-                }}
               />
             </div>
           </div>
@@ -413,7 +265,7 @@ function Mypage() {
                 className="delete-all-button"
                 onClick={handleDeleteAllCompleted}
               >
-                <span className="emoji">🗑️</span>
+                🗑️
               </button>
             </div>
             {completeTasks.length === 0 ? (
