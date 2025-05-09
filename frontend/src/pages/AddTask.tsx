@@ -29,9 +29,16 @@ function AddTask() {
     setSelectedColor(catObj ? catObj.category_color : null);
   };
 
-  function formatToISOString(isoString: string): string {
+  // これを追加
+  function formatToMySQLDateTime(isoString: string): string {
     if (!isoString) return "";
-    return new Date(isoString).toISOString();
+    const date = new Date(isoString);
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+      date.getDate()
+    )} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(
+      date.getSeconds()
+    )}`;
   }
 
   useEffect(() => {
@@ -88,11 +95,12 @@ function AddTask() {
     const createPayload = (start: Date, end: Date) => ({
       memo,
       category: Number(categoryId),
-      start_time: formatToISOString(start.toISOString()),
-      deadline: formatToISOString(end.toISOString()),
+      start_time: formatToMySQLDateTime(start.toISOString()),
+      deadline: formatToMySQLDateTime(end.toISOString()),
       attachment_url: uploadedFiles.map((f) => f.url).join(","),
       repeat_type: repeatType || "",
     });
+
     try {
       if (repeatType === "weekly" || repeatType === "monthly") {
         for (let i = 0; i < repeatCount; i++) {
