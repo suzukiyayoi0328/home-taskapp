@@ -51,7 +51,9 @@ function EditTask() {
     const fetchCategories = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:3001/api/categories", {
+        const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+
+        const res = await axios.get(`${apiBaseUrl}/api/categories`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setCategories(res.data);
@@ -63,7 +65,8 @@ function EditTask() {
     const fetchTask = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(`http://localhost:3001/tasks/${id}`, {
+        const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+        const res = await axios.get(`${apiBaseUrl}/tasks/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = res.data;
@@ -129,10 +132,12 @@ function EditTask() {
     });
 
     try {
+      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+
       if (repeatType === "weekly" || repeatType === "monthly") {
         try {
           await axios.post(
-            "http://localhost:3001/tasks/repeat-group/delete",
+            `${apiBaseUrl}/tasks/repeat-group/delete`,
             {
               category: categoryId,
               memo: memo.trim() === "" ? null : memo.trim(),
@@ -151,6 +156,7 @@ function EditTask() {
         for (let i = 0; i < repeatCount; i++) {
           const start = new Date(baseStart);
           const end = new Date(baseEnd);
+          const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 
           if (repeatType === "weekly") {
             start.setDate(start.getDate() + i * 7);
@@ -161,7 +167,7 @@ function EditTask() {
           }
 
           const payload = createPayload(start, end);
-          await axios.post("http://localhost:3001/tasks", payload, {
+          await axios.post(`${apiBaseUrl}/tasks`, payload, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
@@ -169,7 +175,7 @@ function EditTask() {
         }
       } else {
         const payload = createPayload(baseStart, baseEnd);
-        await axios.put(`http://localhost:3001/tasks/${id}`, payload, {
+        await axios.put(`${apiBaseUrl}/tasks/${id}`, payload, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
       }

@@ -80,14 +80,15 @@ function Register() {
     }
 
     try {
-      const response = await axios.post("http://localhost:3001/api/register", {
+      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+      const response = await axios.post(`${apiBaseUrl}/api/register`, {
         email,
         password,
       });
 
       console.log("登録成功！", response.data);
 
-      const loginRes = await axios.post("http://localhost:3001/api/login", {
+      const loginRes = await axios.post(`${apiBaseUrl}/api/login`, {
         email,
         password,
       });

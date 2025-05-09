@@ -29,7 +29,7 @@ function AddTask() {
     setSelectedColor(catObj ? catObj.category_color : null);
   };
 
-  function formatToMySQLDateTime(isoString: string): string {
+  function formatToPostgresDateTime(isoString: string): string {
     if (!isoString) return "";
     const date = new Date(isoString);
     const pad = (n: number) => n.toString().padStart(2, "0");
@@ -44,14 +44,14 @@ function AddTask() {
     const fetchCategories = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(
-          "http://localhost:3001/api/categories",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+
+        const response = await axios.get(`${apiBaseUrl}/api/categories`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         setCategories(response.data);
       } catch (error) {
         console.error("❌ カテゴリ取得エラー:", error);
@@ -96,13 +96,15 @@ function AddTask() {
     const createPayload = (start: Date, end: Date) => ({
       memo,
       category: Number(categoryId),
-      start_time: formatToMySQLDateTime(start.toISOString()),
-      deadline: formatToMySQLDateTime(end.toISOString()),
+      start_time: formatToPostgresDateTime(start.toISOString()),
+      deadline: formatToPostgresDateTime(end.toISOString()),
       attachment_url: uploadedFiles.map((f) => f.url).join(","),
       repeat_type: repeatType || "",
     });
 
     try {
+      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+
       if (repeatType === "weekly" || repeatType === "monthly") {
         for (let i = 0; i < repeatCount; i++) {
           const start = new Date(baseStart);
@@ -117,7 +119,7 @@ function AddTask() {
           }
 
           const payload = createPayload(start, end);
-          await axios.post("http://localhost:3001/tasks", payload, {
+          await axios.post(`${apiBaseUrl}/tasks`, payload, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -125,7 +127,7 @@ function AddTask() {
         }
       } else {
         const payload = createPayload(baseStart, baseEnd);
-        await axios.post("http://localhost:3001/tasks", payload, {
+        await axios.post(`${apiBaseUrl}/tasks`, payload, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -202,18 +204,17 @@ function AddTask() {
                   type: string;
                 }[] = [];
 
+                const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+
                 for (const file of files) {
                   const formData = new FormData();
                   formData.append("file", file);
 
                   try {
-                    const res = await fetch(
-                      "http://localhost:3001/api/upload",
-                      {
-                        method: "POST",
-                        body: formData,
-                      }
-                    );
+                    const res = await fetch(`${apiBaseUrl}/api/upload`, {
+                      method: "POST",
+                      body: formData,
+                    });
                     const data = await res.json();
 
                     if (data.success && data.data?.url) {

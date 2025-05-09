@@ -51,8 +51,9 @@ function Settings() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:3001/api/users/me", {
+        const res = await fetch(`${apiBaseUrl}/api/users/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -75,17 +76,15 @@ function Settings() {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(
-        "http://localhost:3001/api/users/update-username",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ username: newUsername }),
-        }
-      );
+      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+      const res = await fetch(`${apiBaseUrl}/api/users/update-username`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ username: newUsername }),
+      });
 
       await res.json();
       showToastMessage("ユーザー名を更新しました！");

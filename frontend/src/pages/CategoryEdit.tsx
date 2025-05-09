@@ -17,6 +17,7 @@ function CategoryEdit() {
   );
   const [selectedCategory, setSelectedCategory] = useState("");
   const navigate = useNavigate();
+  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 
   const colorOptions = [
     "#ffca39",
@@ -40,7 +41,7 @@ function CategoryEdit() {
     const fetchCategories = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:3001/api/categories", {
+        const res = await axios.get(`${apiBaseUrl}/api/categories`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -50,7 +51,7 @@ function CategoryEdit() {
       }
     };
     fetchCategories();
-  }, []);
+  }, [apiBaseUrl]);
 
   const handleDeleteCategory = async () => {
     const token = localStorage.getItem("token");
@@ -60,11 +61,10 @@ function CategoryEdit() {
     if (!window.confirm("本当に削除しますか？")) return;
 
     try {
-      await axios.delete(
-        `http://localhost:3001/api/categories/${selectedCategory}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const res = await axios.get("http://localhost:3001/api/categories", {
+      await axios.delete(`${apiBaseUrl}/api/categories/${selectedCategory}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const res = await axios.get(`${apiBaseUrl}/api/categories`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -93,7 +93,7 @@ function CategoryEdit() {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        "http://localhost:3001/api/categories",
+        `${apiBaseUrl}/api/categories`,
         {
           name,
           category_color: color,

@@ -77,8 +77,9 @@ function CalendarPage() {
   const fetchTasks = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
+      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 
-      const res = await fetch("http://localhost:3001/tasks", {
+      const res = await fetch(`${apiBaseUrl}/tasks`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -108,19 +109,21 @@ function CalendarPage() {
     const fetchCategories = async () => {
       try {
         const token = localStorage.getItem("token");
+        const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 
-        const res = await fetch("http://localhost:3001/api/categories", {
+        const res = await fetch(`${apiBaseUrl}/api/categories`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        const data = await res.json();
 
+        const data = await res.json();
         setCategories(data);
       } catch (err) {
         console.error("カテゴリ取得エラー:", err);
       }
     };
+
     fetchCategories();
   }, []);
 
@@ -145,10 +148,11 @@ function CalendarPage() {
       return moment(date).format("YYYY-MM-DD HH:mm:ss");
     };
 
+    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
     const isEdit = !!selectedEvent;
     const url = isEdit
-      ? `http://localhost:3001/tasks/${selectedEvent!.id}`
-      : "http://localhost:3001/tasks";
+      ? `${apiBaseUrl}/tasks/${selectedEvent!.id}`
+      : `${apiBaseUrl}/tasks`;
 
     const method = isEdit ? "PUT" : "POST";
     const token = localStorage.getItem("token");
@@ -180,14 +184,22 @@ function CalendarPage() {
 
   const handleDeleteEvent = async () => {
     if (!selectedEvent) return;
+
+    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+    const token = localStorage.getItem("token");
+
     try {
-      await fetch(`http://localhost:3001/tasks/${selectedEvent.id}`, {
+      await fetch(`${apiBaseUrl}/tasks/${selectedEvent.id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       fetchTasks();
     } catch (err) {
       console.error("削除エラー:", err);
     }
+
     setIsModalOpen(false);
   };
 

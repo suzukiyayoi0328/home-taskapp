@@ -7,14 +7,13 @@ import bcrypt from "bcryptjs";
 import taskRouter from "./routes/tasks";
 import userRoutes from "./routes/user";
 import authenticateToken from "./middleware/auth";
-
 import categoryRoutes from "./routes/categories";
 import uploadRouter from "./routes/upload";
 
 const JWT_SECRET = "mysecretkey";
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 // ミドルウェア
 app.use(cors());
@@ -26,97 +25,71 @@ app.use("/api/upload", uploadRouter);
 
 // サーバー起動
 app.listen(port, () => {
-  console.log(`サーバー起動中 → http://localhost:${port}`);
+  console.log(`✅ サーバー起動中 (port: ${port})`);
 });
 
 // ログインAPI
-app.post("/api/login", (req, res) => {
+app.post("/api/login", async (req: any, res: any) => {
   const { email, password } = req.body;
 
-  const checkSql = "SELECT * FROM users202504171 WHERE email = ?";
-  db.query(checkSql, [email], (checkErr, results: any[]) => {
-    if (checkErr) {
-      console.error("ユーザー確認エラー:", checkErr);
-      return res.status(500).json({ message: "サーバーエラーが発生しました" });
-    }
+  try {
+    const checkSql = "SELECT * FROM users202504171 WHERE email = $1";
+    const result = await db.query(checkSql, [email]);
 
-    if (results.length === 0) {
+    if (result.rows.length === 0) {
       return res.status(401).json({ message: "ユーザーが見つかりません" });
     }
 
-    const user = results[0];
+    const user = result.rows[0];
 
-    bcrypt.compare(password, user.password, (err, isMatch) => {
-      if (err) {
-        console.error("パスワード照合エラー:", err);
-        return res
-          .status(500)
-          .json({ message: "サーバーエラーが発生しました" });
-      }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res
+        .status(401)
+        .json({ message: "ユーザー名またはパスワードが間違っています" });
+    }
 
-      if (!isMatch) {
-        return res
-          .status(401)
-          .json({ message: "ユーザー名またはパスワードが間違っています" });
-      }
-
-      const token = jwt.sign({ email: user.email, id: user.id }, JWT_SECRET, {
-        expiresIn: "1h",
-      });
-
-      res.json({ token });
+    const token = jwt.sign({ email: user.email, id: user.id }, JWT_SECRET, {
+      expiresIn: "1h",
     });
-  });
+
+    res.json({ token });
+  } catch (error) {
+    console.error("ログインエラー:", error);
+    res.status(500).json({ message: "サーバーエラーが発生しました" });
+  }
 });
 
 // ユーザー登録API
-app.post("/api/register", (req, res) => {
+app.post("/api/register", async (req: any, res: any) => {
   const { email, password } = req.body;
 
-  const checkSql = "SELECT * FROM users202504171 WHERE email = ?";
-  db.query(checkSql, [email], (checkErr, results: any[]) => {
-    if (checkErr) {
-      console.error("ユーザー確認エラー:", checkErr);
-      return res.status(500).json({ message: "サーバーエラーが発生しました" });
-    }
+  try {
+    const checkSql = "SELECT * FROM users202504171 WHERE email = $1";
+    const checkResult = await db.query(checkSql, [email]);
 
-    if (results.length > 0) {
+    if (checkResult.rows.length > 0) {
       return res
         .status(409)
         .json({ message: "このメールアドレスは既に使用されています" });
     }
 
-    bcrypt.hash(password, 10, (hashErr, hashedPassword) => {
-      if (hashErr) {
-        console.error("ハッシュ化エラー:", hashErr);
-        return res
-          .status(500)
-          .json({ message: "登録に失敗しました（ハッシュ化エラー）" });
-      }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const insertSql =
+      "INSERT INTO users202504171 (email, password) VALUES ($1, $2)";
+    await db.query(insertSql, [email, hashedPassword]);
 
-      const insertSql =
-        "INSERT INTO users202504171 (email, password) VALUES (?, ?)";
-      db.query(insertSql, [email, hashedPassword], (insertErr, result) => {
-        if (insertErr) {
-          console.error("DB登録エラー:", insertErr);
-
-          const errorCode = (insertErr as any).code;
-          console.log("errorCode:", errorCode);
-
-          if (errorCode === "ER_DUP_ENTRY") {
-            console.log("💡 ER_DUP_ENTRY に入りました！");
-            return res.status(409).json({
-              message: "このメールアドレスは既に使用されています（DB）",
-            });
-          }
-
-          return res.status(500).json({ message: "登録に失敗しました" });
-        }
-
-        res.status(200).json({ message: "登録成功！" });
-      });
-    });
-  });
+    res.status(200).json({ message: "登録成功！" });
+  } catch (error: any) {
+    console.error("DB登録エラー:", error);
+    if (error.code === "23505") {
+      // PostgreSQLの一意制約違反コード
+      return res
+        .status(409)
+        .json({ message: "このメールアドレスは既に使用されています（DB）" });
+    }
+    res.status(500).json({ message: "登録に失敗しました" });
+  }
 });
 
 // 保護されたデータ取得API

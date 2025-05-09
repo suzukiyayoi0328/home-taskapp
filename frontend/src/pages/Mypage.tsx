@@ -65,8 +65,9 @@ function Mypage() {
 
   const fetchTasks = async () => {
     try {
+      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:3001/tasks", {
+      const res = await fetch(`${apiBaseUrl}/tasks`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -99,7 +100,8 @@ function Mypage() {
 
   const handleDeleteWithToast = async (taskId: number) => {
     try {
-      await fetch(`http://localhost:3001/tasks/${taskId}`, {
+      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+      await fetch(`${apiBaseUrl}/tasks/${taskId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -133,7 +135,8 @@ function Mypage() {
     const confirmed = window.confirm("全ての完了したタスクを削除しますか？");
     if (!confirmed) return;
     try {
-      await fetch("http://localhost:3001/tasks/completed", {
+      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+      await fetch(`${apiBaseUrl}/tasks/completed`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -151,7 +154,8 @@ function Mypage() {
   const fetchUser = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:3001/api/users/me", {
+      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+      const res = await fetch(`${apiBaseUrl}/api/users/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();

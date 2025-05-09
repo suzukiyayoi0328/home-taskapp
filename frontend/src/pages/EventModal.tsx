@@ -237,17 +237,16 @@ const EventModal: React.FC<EventModalProps> = ({
                     formData.append("file", file);
 
                     try {
-                      const res = await fetch(
-                        "http://localhost:3001/api/upload",
-                        {
-                          method: "POST",
-                          body: formData,
-                          headers: {
-                            Authorization:
-                              "Bearer " + localStorage.getItem("token"),
-                          },
-                        }
-                      );
+                      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+
+                      const res = await fetch(`${apiBaseUrl}/api/upload`, {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                          Authorization:
+                            "Bearer " + localStorage.getItem("token"),
+                        },
+                      });
                       const data = await res.json();
 
                       if (data.success && data.data?.url) {

@@ -23,7 +23,8 @@ function TaskCard({
 }) {
   const handleCheckboxChange = async () => {
     try {
-      await fetch("http://localhost:3001/tasks/" + task.id, {
+      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+      await fetch(`${apiBaseUrl}/tasks/` + task.id, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -42,7 +43,9 @@ function TaskCard({
     if (!confirmDelete) return;
 
     try {
-      await fetch(`http://localhost:3001/tasks/${task.id}`, {
+      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+
+      await fetch(`${apiBaseUrl}/${task.id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
