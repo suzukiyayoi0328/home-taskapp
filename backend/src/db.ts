@@ -1,19 +1,20 @@
 // db.ts
-import { Client } from "pg"; // PostgreSQL用のクライアントをインポート
+import { Pool } from "pg";
+import dotenv from "dotenv";
 
-// PostgreSQLの接続設定
-export const db = new Client({
-  host: "home-task-app-db-name-render.onrender.com",
-  user: "home_task_app_user",
-  password: "oZApnXA0Z8MBVW6tpMkVTDoRe4GlYQrD",
-  database: "home_task_app",
-  port: 5432,
+dotenv.config();
+
+export const db = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false, // Render推奨設定
+  },
 });
 
 db.connect((err) => {
   if (err) {
-    console.error("DB接続失敗:", err);
+    console.error("❌ DB接続失敗:", err);
   } else {
-    console.log("DB接続成功");
+    console.log("✅ DB接続成功");
   }
 });
