@@ -1,9 +1,9 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
-import bodyParser from "body-parser";
 import { db } from "./db";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+
 import taskRouter from "./routes/tasks";
 import userRoutes from "./routes/user";
 import authenticateToken from "./middleware/auth";
@@ -11,38 +11,51 @@ import categoryRoutes from "./routes/categories";
 import uploadRouter from "./routes/upload";
 
 const JWT_SECRET = "mysecretkey";
-
 const app = express();
 const port = process.env.PORT || 3001;
 
-// ミドルウェア
-app.use(cors());
-app.use(bodyParser.json());
+// ✅ CORS設定（本番Vercel URLとローカル許可）
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://home-taskapp-131k.vercel.app", // ← 本番URL！ここが重要！
+];
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
+
+// ✅ JSONボディのパース
+app.use(express.json());
+
+// ✅ ルーティング
 app.use("/tasks", taskRouter);
 app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/upload", uploadRouter);
 
-// サーバー起動
+// ✅ サーバー起動
 app.listen(port, () => {
   console.log(`✅ サーバー起動中 (port: ${port})`);
 });
 
-// ログインAPI
+// ✅ ログインAPI
 app.post("/api/login", async (req: any, res: any) => {
   const { email, password } = req.body;
 
   try {
-    const checkSql = "SELECT * FROM users202504171 WHERE email = $1";
-    const result = await db.query(checkSql, [email]);
+    const sql = "SELECT * FROM users202504171 WHERE email = $1";
+    const result = await db.query(sql, [email]);
 
     if (result.rows.length === 0) {
       return res.status(401).json({ message: "ユーザーが見つかりません" });
     }
 
     const user = result.rows[0];
-
     const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
       return res
         .status(401)
@@ -60,7 +73,7 @@ app.post("/api/login", async (req: any, res: any) => {
   }
 });
 
-// ユーザー登録API
+// ✅ ユーザー登録API
 app.post("/api/register", async (req: any, res: any) => {
   const { email, password } = req.body;
 
@@ -83,7 +96,6 @@ app.post("/api/register", async (req: any, res: any) => {
   } catch (error: any) {
     console.error("DB登録エラー:", error);
     if (error.code === "23505") {
-      // PostgreSQLの一意制約違反コード
       return res
         .status(409)
         .json({ message: "このメールアドレスは既に使用されています（DB）" });
@@ -92,7 +104,7 @@ app.post("/api/register", async (req: any, res: any) => {
   }
 });
 
-// 保護されたデータ取得API
-app.get("/api/protected", authenticateToken, (req: any, res) => {
+// ✅ 認証保護付きAPI
+app.get("/api/protected", authenticateToken, (req: any, res: Response) => {
   res.json({ message: "これは保護されたデータです", user: req.user });
 });
