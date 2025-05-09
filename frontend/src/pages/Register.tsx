@@ -80,18 +80,23 @@ function Register() {
     }
 
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
-      const response = await axios.post(`${apiBaseUrl}/api/register`, {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "https://home-taskapp-backend.onrender.com/api/register",
+        {
+          email,
+          password,
+        }
+      );
 
       console.log("登録成功！", response.data);
 
-      const loginRes = await axios.post(`${apiBaseUrl}/api/login`, {
-        email,
-        password,
-      });
+      const loginRes = await axios.post(
+        "https://home-taskapp-backend.onrender.com/api/login",
+        {
+          email,
+          password,
+        }
+      );
 
       const token = loginRes.data.token;
       localStorage.setItem("token", token);

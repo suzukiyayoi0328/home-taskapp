@@ -51,11 +51,12 @@ function EditTask() {
     const fetchCategories = async () => {
       try {
         const token = localStorage.getItem("token");
-        const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
-
-        const res = await axios.get(`${apiBaseUrl}/api/categories`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          "https://home-taskapp-backend.onrender.com/api/categories",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setCategories(res.data);
       } catch (err) {
         console.error("カテゴリ取得失敗", err);
@@ -65,10 +66,12 @@ function EditTask() {
     const fetchTask = async () => {
       try {
         const token = localStorage.getItem("token");
-        const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
-        const res = await axios.get(`${apiBaseUrl}/tasks/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          `https://home-taskapp-backend.onrender.com/tasks/${id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         const data = res.data;
         setTask(data);
         setMemo(data.memo ?? "");
@@ -132,12 +135,10 @@ function EditTask() {
     });
 
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
-
       if (repeatType === "weekly" || repeatType === "monthly") {
         try {
           await axios.post(
-            `${apiBaseUrl}/tasks/repeat-group/delete`,
+            "https://home-taskapp-backend.onrender.com/tasks/repeat-group/delete",
             {
               category: categoryId,
               memo: memo.trim() === "" ? null : memo.trim(),
@@ -156,7 +157,6 @@ function EditTask() {
         for (let i = 0; i < repeatCount; i++) {
           const start = new Date(baseStart);
           const end = new Date(baseEnd);
-          const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 
           if (repeatType === "weekly") {
             start.setDate(start.getDate() + i * 7);
@@ -167,17 +167,27 @@ function EditTask() {
           }
 
           const payload = createPayload(start, end);
-          await axios.post(`${apiBaseUrl}/tasks`, payload, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          });
+          await axios.post(
+            "https://home-taskapp-backend.onrender.com/tasks",
+            payload,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
         }
       } else {
         const payload = createPayload(baseStart, baseEnd);
-        await axios.put(`${apiBaseUrl}/tasks/${id}`, payload, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
+        await axios.put(
+          `https://home-taskapp-backend.onrender.com/tasks/${id}`,
+          payload,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
       }
 
       localStorage.setItem("taskUpdated", "true");

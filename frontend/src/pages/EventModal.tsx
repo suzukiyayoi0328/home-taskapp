@@ -237,16 +237,17 @@ const EventModal: React.FC<EventModalProps> = ({
                     formData.append("file", file);
 
                     try {
-                      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
-
-                      const res = await fetch(`${apiBaseUrl}/api/upload`, {
-                        method: "POST",
-                        body: formData,
-                        headers: {
-                          Authorization:
-                            "Bearer " + localStorage.getItem("token"),
-                        },
-                      });
+                      const res = await fetch(
+                        "https://home-taskapp-backend.onrender.com/api/upload",
+                        {
+                          method: "POST",
+                          body: formData,
+                          headers: {
+                            Authorization:
+                              "Bearer " + localStorage.getItem("token"),
+                          },
+                        }
+                      );
                       const data = await res.json();
 
                       if (data.success && data.data?.url) {

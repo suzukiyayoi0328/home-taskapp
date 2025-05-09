@@ -12,12 +12,12 @@ import uploadRouter from "./routes/upload";
 
 const JWT_SECRET = "mysecretkey";
 const app = express();
-const port = process.env.PORT || 3001;
+const port = 3001;
 
-// ✅ CORS設定（本番Vercel URLとローカル許可）
+// CORS設定
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://home-taskapp-131k.vercel.app", // ← 本番URL！ここが重要！
+  "https://home-taskapp-131k.vercel.app",
 ];
 
 app.use(
@@ -27,21 +27,20 @@ app.use(
   })
 );
 
-// ✅ JSONボディのパース
 app.use(express.json());
 
-// ✅ ルーティング
+// ルーティング
 app.use("/tasks", taskRouter);
 app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/upload", uploadRouter);
 
-// ✅ サーバー起動
+// サーバー起動
 app.listen(port, () => {
   console.log(`✅ サーバー起動中 (port: ${port})`);
 });
 
-// ✅ ログインAPI
+// ログインAPI
 app.post("/api/login", async (req: any, res: any) => {
   const { email, password } = req.body;
 
@@ -73,7 +72,7 @@ app.post("/api/login", async (req: any, res: any) => {
   }
 });
 
-// ✅ ユーザー登録API
+// 登録API
 app.post("/api/register", async (req: any, res: any) => {
   const { email, password } = req.body;
 
@@ -94,7 +93,7 @@ app.post("/api/register", async (req: any, res: any) => {
 
     res.status(200).json({ message: "登録成功！" });
   } catch (error: any) {
-    console.error("DB登録エラー:", error);
+    console.error("登録エラー:", error);
     if (error.code === "23505") {
       return res
         .status(409)
@@ -104,7 +103,7 @@ app.post("/api/register", async (req: any, res: any) => {
   }
 });
 
-// ✅ 認証保護付きAPI
+// 認証保護API
 app.get("/api/protected", authenticateToken, (req: any, res: Response) => {
   res.json({ message: "これは保護されたデータです", user: req.user });
 });

@@ -2,12 +2,12 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "jsx": "react-jsx", // ← ここ大事！！
+    "jsx": "react-jsx",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["src"] // ← これも入ってる？
+  "include": ["src"]
 }

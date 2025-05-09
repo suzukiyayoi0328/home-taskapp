@@ -52,14 +52,16 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
-      const response = await fetch(`${apiBaseUrl}/api/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: username, password }),
-      });
+      const response = await fetch(
+        "https://home-taskapp-backend.onrender.com/api/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: username, password }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error();

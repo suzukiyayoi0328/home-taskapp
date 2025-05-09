@@ -17,7 +17,6 @@ function CategoryEdit() {
   );
   const [selectedCategory, setSelectedCategory] = useState("");
   const navigate = useNavigate();
-  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 
   const colorOptions = [
     "#ffca39",
@@ -41,9 +40,12 @@ function CategoryEdit() {
     const fetchCategories = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(`${apiBaseUrl}/api/categories`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          "https://home-taskapp-backend.onrender.com/api/categories",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         setCategories(res.data);
       } catch (err) {
@@ -51,7 +53,7 @@ function CategoryEdit() {
       }
     };
     fetchCategories();
-  }, [apiBaseUrl]);
+  }, []);
 
   const handleDeleteCategory = async () => {
     const token = localStorage.getItem("token");
@@ -61,12 +63,16 @@ function CategoryEdit() {
     if (!window.confirm("本当に削除しますか？")) return;
 
     try {
-      await axios.delete(`${apiBaseUrl}/api/categories/${selectedCategory}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const res = await axios.get(`${apiBaseUrl}/api/categories`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `https://home-taskapp-backend.onrender.com/api/categories/${selectedCategory}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const res = await axios.get(
+        "https://home-taskapp-backend.onrender.com/api/categories",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       setCategories(res.data);
       setSelectedCategory("");
@@ -93,7 +99,7 @@ function CategoryEdit() {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        `${apiBaseUrl}/api/categories`,
+        "https://home-taskapp-backend.onrender.com/api/categories",
         {
           name,
           category_color: color,

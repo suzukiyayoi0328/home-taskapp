@@ -1,54 +1,33 @@
-# React + TypeScript + Vite
+# 家事タスク管理アプリ
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+##  アプリの概要
+日々の家事や予定を、カテゴリごとに登録・管理できるWebアプリです。  
+カレンダー表示・カレンダーからのタスク登録・ファイル添付にも対応しています。
 
-Currently, two official plugins are available:
+## 使用技術
+- フロントエンド：React (TypeScript)
+- バックエンド：Node.js (Express)
+- DB：MySQL
+- デプロイ：Vercel（フロント） / Render（バックエンド）
+- その他：react-big-calendar, axios, JWT認証, etc.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 主な機能
+- ユーザー登録 / ログイン（JWTによる認証）
+- タスクの追加・編集・削除
+- タスクのカテゴリ管理（色分け対応）
+- カレンダーでのスケジュール可視化
+- ファイル添付（画像プレビュー対応）
+- ダークモード / レスポンシブ対応
 
-## Expanding the ESLint configuration
+##  画面イメージ
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+##  起動方法（開発用）
+### フロントエンド
+```bash
+cd frontend
+npm install
+npm run dev
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+cd backend
+npm install
+npm start

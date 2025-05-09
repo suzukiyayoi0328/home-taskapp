@@ -23,15 +23,17 @@ function TaskCard({
 }) {
   const handleCheckboxChange = async () => {
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
-      await fetch(`${apiBaseUrl}/tasks/` + task.id, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ is_done: task.is_done === 1 ? 0 : 1 }),
-      });
+      await fetch(
+        "https://home-taskapp-backend.onrender.com/tasks/" + task.id,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ is_done: task.is_done === 1 ? 0 : 1 }),
+        }
+      );
       onStatusChange();
     } catch (err) {
       console.error("更新失敗", err);
@@ -43,14 +45,15 @@ function TaskCard({
     if (!confirmDelete) return;
 
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
-
-      await fetch(`${apiBaseUrl}/${task.id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      await fetch(
+        `https://home-taskapp-backend.onrender.com/tasks/${task.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       onDelete();
     } catch (err) {
       console.error("削除失敗", err);

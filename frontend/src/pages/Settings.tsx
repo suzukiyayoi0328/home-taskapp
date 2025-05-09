@@ -51,13 +51,15 @@ function Settings() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
         const token = localStorage.getItem("token");
-        const res = await fetch(`${apiBaseUrl}/api/users/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          "https://home-taskapp-backend.onrender.com/api/users/me",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const data = await res.json();
         const displayName = data.username ?? data.email.split("@")[0];
         setNewUsername(displayName);
@@ -76,15 +78,17 @@ function Settings() {
 
     try {
       const token = localStorage.getItem("token");
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
-      const res = await fetch(`${apiBaseUrl}/api/users/update-username`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ username: newUsername }),
-      });
+      const res = await fetch(
+        "https://home-taskapp-backend.onrender.com/api/users/update-username",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ username: newUsername }),
+        }
+      );
 
       await res.json();
       showToastMessage("ユーザー名を更新しました！");

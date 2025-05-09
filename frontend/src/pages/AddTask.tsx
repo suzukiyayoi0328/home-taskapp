@@ -29,7 +29,7 @@ function AddTask() {
     setSelectedColor(catObj ? catObj.category_color : null);
   };
 
-  function formatToPostgresDateTime(isoString: string): string {
+  function formatToMySQLDateTime(isoString: string): string {
     if (!isoString) return "";
     const date = new Date(isoString);
     const pad = (n: number) => n.toString().padStart(2, "0");
@@ -44,14 +44,14 @@ function AddTask() {
     const fetchCategories = async () => {
       try {
         const token = localStorage.getItem("token");
-        const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
-
-        const response = await axios.get(`${apiBaseUrl}/api/categories`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
+        const response = await axios.get(
+          "https://home-taskapp-backend.onrender.com/api/categories",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setCategories(response.data);
       } catch (error) {
         console.error("❌ カテゴリ取得エラー:", error);
@@ -63,8 +63,6 @@ function AddTask() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const token = localStorage.getItem("token");
 
     if (!startTime) {
       setErrorMessage("開始日時を入力してください。");
@@ -96,15 +94,13 @@ function AddTask() {
     const createPayload = (start: Date, end: Date) => ({
       memo,
       category: Number(categoryId),
-      start_time: formatToPostgresDateTime(start.toISOString()),
-      deadline: formatToPostgresDateTime(end.toISOString()),
+      start_time: formatToMySQLDateTime(start.toISOString()),
+      deadline: formatToMySQLDateTime(end.toISOString()),
       attachment_url: uploadedFiles.map((f) => f.url).join(","),
       repeat_type: repeatType || "",
     });
 
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
-
       if (repeatType === "weekly" || repeatType === "monthly") {
         for (let i = 0; i < repeatCount; i++) {
           const start = new Date(baseStart);
@@ -119,19 +115,17 @@ function AddTask() {
           }
 
           const payload = createPayload(start, end);
-          await axios.post(`${apiBaseUrl}/tasks`, payload, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          await axios.post(
+            "https://home-taskapp-backend.onrender.com/tasks",
+            payload
+          );
         }
       } else {
         const payload = createPayload(baseStart, baseEnd);
-        await axios.post(`${apiBaseUrl}/tasks`, payload, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        await axios.post(
+          "https://home-taskapp-backend.onrender.com/tasks",
+          payload
+        );
       }
 
       localStorage.setItem("taskAdded", "true");
@@ -204,17 +198,18 @@ function AddTask() {
                   type: string;
                 }[] = [];
 
-                const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
-
                 for (const file of files) {
                   const formData = new FormData();
                   formData.append("file", file);
 
                   try {
-                    const res = await fetch(`${apiBaseUrl}/api/upload`, {
-                      method: "POST",
-                      body: formData,
-                    });
+                    const res = await fetch(
+                      "https://home-taskapp-backend.onrender.com/api/upload",
+                      {
+                        method: "POST",
+                        body: formData,
+                      }
+                    );
                     const data = await res.json();
 
                     if (data.success && data.data?.url) {

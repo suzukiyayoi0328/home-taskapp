@@ -65,13 +65,15 @@ function Mypage() {
 
   const fetchTasks = async () => {
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
       const token = localStorage.getItem("token");
-      const res = await fetch(`${apiBaseUrl}/tasks`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        "https://home-taskapp-backend.onrender.com/tasks",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       const data = await res.json();
       const formatted = data.map((task: Omit<Task, "title">) => ({
         ...task,
@@ -100,8 +102,7 @@ function Mypage() {
 
   const handleDeleteWithToast = async (taskId: number) => {
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
-      await fetch(`${apiBaseUrl}/tasks/${taskId}`, {
+      await fetch(`https://home-taskapp-backend.onrender.com/tasks/${taskId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -135,8 +136,7 @@ function Mypage() {
     const confirmed = window.confirm("全ての完了したタスクを削除しますか？");
     if (!confirmed) return;
     try {
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
-      await fetch(`${apiBaseUrl}/tasks/completed`, {
+      await fetch("https://home-taskapp-backend.onrender.com/tasks/completed", {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -154,10 +154,12 @@ function Mypage() {
   const fetchUser = async () => {
     try {
       const token = localStorage.getItem("token");
-      const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
-      const res = await fetch(`${apiBaseUrl}/api/users/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(
+        "https://home-taskapp-backend.onrender.com/api/users/me",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       const data = await res.json();
       const name = data.username ?? data.email?.split("@")[0] ?? "ユーザー";
       setUsername(name);
