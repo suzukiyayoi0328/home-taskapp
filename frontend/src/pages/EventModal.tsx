@@ -106,6 +106,14 @@ const EventModal: React.FC<EventModalProps> = ({
     }
   }, [initialData, categories]);
 
+  function formatToMySQLDateTime(date: Date): string {
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    const jst = new Date(date.getTime() + 9 * 60 * 60 * 1000); // JSTに補正
+    return `${jst.getFullYear()}-${pad(jst.getMonth() + 1)}-${pad(
+      jst.getDate()
+    )} ${pad(jst.getHours())}:${pad(jst.getMinutes())}:00`;
+  }
+
   const handleSave = async () => {
     if (!start) {
       setErrorMessage("開始日時は必須です。");
@@ -133,8 +141,8 @@ const EventModal: React.FC<EventModalProps> = ({
 
     const createPayload = (s: Date, e: Date) => ({
       category: String(categoryId),
-      start: s,
-      end: e,
+      start: new Date(formatToMySQLDateTime(s)),
+      end: new Date(formatToMySQLDateTime(e)),
       memo: memo.trim() === "" ? null : memo.trim(),
       attachment_url: uploadedFiles.map((f) => f.url).join(","),
       repeat_type: repeatType,

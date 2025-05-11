@@ -148,9 +148,8 @@ function CalendarPage() {
 
   const handleSaveEvent = async (data: EventData) => {
     const formatDate = (date: Date) => {
-      return moment(date).format("YYYY-MM-DD HH:mm:ss");
+      return moment(date).format("YYYY-MM-DD HH:mm:ss"); // JSTへの補正はしない
     };
-
     const isEdit = !!selectedEvent;
     const url = isEdit
       ? `https://home-taskapp-backend.onrender.com/tasks/${selectedEvent!.id}`
