@@ -29,6 +29,17 @@ function AddTask() {
     setSelectedColor(catObj ? catObj.category_color : null);
   };
 
+  function formatToMySQLDateTime(isoString: string): string {
+    if (!isoString) return "";
+    const date = new Date(isoString);
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+      date.getDate()
+    )} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(
+      date.getSeconds()
+    )}`;
+  }
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -80,11 +91,11 @@ function AddTask() {
     const baseEnd = new Date(deadline);
     const repeatCount = 4;
 
-    const createPayload = () => ({
+    const createPayload = (start: Date, end: Date) => ({
       memo,
       category: Number(categoryId),
-      start_time: startTime + ":00", // ← ここだけでOK
-      deadline: deadline + ":00", // ← ここだけでOK
+      start_time: formatToMySQLDateTime(start.toISOString()),
+      deadline: formatToMySQLDateTime(end.toISOString()),
       attachment_url: uploadedFiles.map((f) => f.url).join(","),
       repeat_type: repeatType || "",
     });
@@ -103,14 +114,14 @@ function AddTask() {
             end.setMonth(end.getMonth() + i);
           }
 
-          const payload = createPayload();
+          const payload = createPayload(start, end);
           await axios.post(
             "https://home-taskapp-backend.onrender.com/tasks",
             payload
           );
         }
       } else {
-        const payload = createPayload();
+        const payload = createPayload(baseStart, baseEnd);
         await axios.post(
           "https://home-taskapp-backend.onrender.com/tasks",
           payload
