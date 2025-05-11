@@ -108,10 +108,10 @@ const EventModal: React.FC<EventModalProps> = ({
 
   function formatToMySQLDateTime(date: Date): string {
     const pad = (n: number) => n.toString().padStart(2, "0");
-    const jst = new Date(date.getTime() + 9 * 60 * 60 * 1000); // JSTに補正
-    return `${jst.getFullYear()}-${pad(jst.getMonth() + 1)}-${pad(
-      jst.getDate()
-    )} ${pad(jst.getHours())}:${pad(jst.getMinutes())}:00`;
+    const shifted = new Date(date.getTime() - 16 * 60 * 60 * 1000); // -16時間補正
+    return `${shifted.getFullYear()}-${pad(shifted.getMonth() + 1)}-${pad(
+      shifted.getDate()
+    )} ${pad(shifted.getHours())}:${pad(shifted.getMinutes())}:00`;
   }
 
   const handleSave = async () => {
