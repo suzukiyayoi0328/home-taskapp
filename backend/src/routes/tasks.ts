@@ -159,6 +159,24 @@ router.put("/:id", authenticateToken, async (req: any, res: any) => {
     res.status(500).json({ message: "タスクの更新に失敗しました" });
   }
 });
+// ✅ 1件削除
+router.delete("/:id", authenticateToken, async (req: any, res: any) => {
+  const taskId = req.params.id;
+  const userId = req.user.id;
+
+  const sql = `
+    DELETE FROM tasks20250418
+    WHERE id = $1 AND users202504171_id = $2
+  `;
+
+  try {
+    await db.query(sql, [taskId, userId]);
+    res.json({ message: "タスク削除成功" });
+  } catch (err) {
+    console.error("タスク削除失敗:", err);
+    res.status(500).json({ message: "タスクの削除に失敗しました" });
+  }
+});
 
 // ✅ 完了済みタスク全削除
 router.delete("/completed", authenticateToken, async (req: any, res: any) => {
