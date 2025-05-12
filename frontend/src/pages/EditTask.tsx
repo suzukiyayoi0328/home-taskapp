@@ -67,7 +67,7 @@ function EditTask() {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          `https://home-taskapp-backend.onrender.com/tasks/${id}`,
+          `https://home-taskapp-backend.onrender.com/api/tasks/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -138,7 +138,7 @@ function EditTask() {
       if (repeatType === "weekly" || repeatType === "monthly") {
         try {
           await axios.post(
-            "https://home-taskapp-backend.onrender.com/tasks/repeat-group/delete",
+            "https://home-taskapp-backend.onrender.com/api/tasks/repeat-group/delete",
             {
               category: categoryId,
               memo: memo.trim() === "" ? null : memo.trim(),
@@ -168,7 +168,7 @@ function EditTask() {
 
           const payload = createPayload(start, end);
           await axios.post(
-            "https://home-taskapp-backend.onrender.com/tasks",
+            "https://home-taskapp-backend.onrender.com/api/tasks",
             payload,
             {
               headers: {
@@ -180,7 +180,7 @@ function EditTask() {
       } else {
         const payload = createPayload(baseStart, baseEnd);
         await axios.put(
-          `https://home-taskapp-backend.onrender.com/tasks/${id}`,
+          `https://home-taskapp-backend.onrender.com/api/tasks/${id}`,
           payload,
           {
             headers: {

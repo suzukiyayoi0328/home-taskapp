@@ -79,7 +79,7 @@ function CalendarPage() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        "https://home-taskapp-backend.onrender.com/tasks",
+        "https://home-taskapp-backend.onrender.com/api/tasks",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -152,8 +152,10 @@ function CalendarPage() {
     };
     const isEdit = !!selectedEvent;
     const url = isEdit
-      ? `https://home-taskapp-backend.onrender.com/tasks/${selectedEvent!.id}`
-      : "https://home-taskapp-backend.onrender.com/tasks";
+      ? `https://home-taskapp-backend.onrender.com/api/tasks/${
+          selectedEvent!.id
+        }`
+      : "https://home-taskapp-backend.onrender.com/api/tasks";
 
     const method = isEdit ? "PUT" : "POST";
     const token = localStorage.getItem("token");
@@ -187,7 +189,7 @@ function CalendarPage() {
     if (!selectedEvent) return;
     try {
       await fetch(
-        `https://home-taskapp-backend.onrender.com/tasks/${selectedEvent.id}`,
+        `https://home-taskapp-backend.onrender.com/api/tasks/${selectedEvent.id}`,
         {
           method: "DELETE",
         }
