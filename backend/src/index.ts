@@ -14,7 +14,7 @@ const JWT_SECRET = "mysecretkey";
 const app = express();
 const port = 3001;
 
-// CORS設定
+// ✅ CORS設定改善版
 const allowedOrigins = [
   "http://localhost:3000",
   "https://home-taskapp-131k.vercel.app",
@@ -22,25 +22,33 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
 app.use(express.json());
 
-// ルーティング
+// ✅ ルーティング
 app.use("/api/tasks", taskRouter);
 app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/upload", uploadRouter);
 
-// サーバー起動
+// ✅ サーバー起動
 app.listen(port, () => {
   console.log(`✅ サーバー起動中 (port: ${port})`);
 });
 
-// ログインAPI
+// ✅ ログインAPI
 app.post("/api/login", async (req: any, res: any) => {
   const { email, password } = req.body;
 
@@ -72,7 +80,7 @@ app.post("/api/login", async (req: any, res: any) => {
   }
 });
 
-// 登録API
+// ✅ 登録API
 app.post("/api/register", async (req: any, res: any) => {
   const { email, password } = req.body;
 
@@ -103,7 +111,7 @@ app.post("/api/register", async (req: any, res: any) => {
   }
 });
 
-// 認証保護API
+// ✅ 認証保護API
 app.get("/api/protected", authenticateToken, (req: any, res: Response) => {
   res.json({ message: "これは保護されたデータです", user: req.user });
 });
