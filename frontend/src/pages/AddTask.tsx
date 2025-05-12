@@ -101,6 +101,8 @@ function AddTask() {
     });
 
     try {
+      const token = localStorage.getItem("token");
+
       if (repeatType === "weekly" || repeatType === "monthly") {
         for (let i = 0; i < repeatCount; i++) {
           const start = new Date(baseStart);
@@ -116,18 +118,27 @@ function AddTask() {
 
           const payload = createPayload(start, end);
           await axios.post(
-            "https://home-taskapp-backend.onrender.com/tasks",
-            payload
+            "https://home-taskapp-backend.onrender.com/api/tasks", // ← /api/tasks に修正
+            payload,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
         }
       } else {
         const payload = createPayload(baseStart, baseEnd);
         await axios.post(
-          "https://home-taskapp-backend.onrender.com/tasks",
-          payload
+          "https://home-taskapp-backend.onrender.com/api/tasks", // ← /api/tasks に修正
+          payload,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
       }
-
       localStorage.setItem("taskAdded", "true");
       navigate("/mypage");
     } catch (error) {

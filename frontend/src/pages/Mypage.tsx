@@ -63,7 +63,7 @@ function Mypage() {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        "https://home-taskapp-backend.onrender.com/tasks",
+        "https://home-taskapp-backend.onrender.com/api/tasks",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -92,10 +92,13 @@ function Mypage() {
 
   const handleDeleteWithToast = async (taskId: number) => {
     try {
-      await fetch(`https://home-taskapp-backend.onrender.com/tasks/${taskId}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      await fetch(
+        `https://home-taskapp-backend.onrender.com/api/tasks/${taskId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
       fetchTasks();
       showToastWithFade("タスクを削除しました！");
     } catch (err) {
@@ -107,10 +110,13 @@ function Mypage() {
   const handleDeleteAllCompleted = async () => {
     if (!window.confirm("全ての完了したタスクを削除しますか？")) return;
     try {
-      await fetch("https://home-taskapp-backend.onrender.com/tasks/completed", {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      await fetch(
+        "https://home-taskapp-backend.onrender.com/api/tasks/completed",
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
       fetchTasks();
       showToastWithFade("完了したタスクをすべて削除しました！");
     } catch (err) {
