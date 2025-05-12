@@ -111,7 +111,7 @@ function Mypage() {
     if (!window.confirm("全ての完了したタスクを削除しますか？")) return;
     try {
       await fetch(
-        "https://home-taskapp-backend.onrender.com/api/yotasks/completed",
+        "https://home-taskapp-backend.onrender.com/api/tasks/completed",
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },

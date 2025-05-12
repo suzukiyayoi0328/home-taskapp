@@ -30,7 +30,7 @@ app.use(
 app.use(express.json());
 
 // ルーティング
-app.use("/tasks", taskRouter);
+app.use("/api/tasks", taskRouter);
 app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/upload", uploadRouter);
