@@ -24,7 +24,7 @@ function TaskCard({
   const handleCheckboxChange = async () => {
     try {
       await fetch(
-        "https://home-taskapp-backend.onrender.com/tasks/" + task.id,
+        "https://home-taskapp-backend.onrender.com/api/tasks/" + task.id,
         {
           method: "PATCH",
           headers: {
@@ -46,7 +46,7 @@ function TaskCard({
 
     try {
       await fetch(
-        `https://home-taskapp-backend.onrender.com/tasks/${task.id}`,
+        `https://home-taskapp-backend.onrender.com/api/tasks/${task.id}`,
         {
           method: "DELETE",
           headers: {
