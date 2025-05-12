@@ -94,8 +94,8 @@ function AddTask() {
     const createPayload = (start: Date, end: Date) => ({
       memo,
       category: Number(categoryId),
-      start_time: formatToMySQLDateTime(start.toISOString()),
-      deadline: formatToMySQLDateTime(end.toISOString()),
+      start_time: formatToMySQLDateTime(start.toString()), // ← ここを toString() か Date型のまま
+      deadline: formatToMySQLDateTime(end.toString()),
       attachment_url: uploadedFiles.map((f) => f.url).join(","),
       repeat_type: repeatType || "",
     });
