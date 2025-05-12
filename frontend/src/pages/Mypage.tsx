@@ -282,7 +282,7 @@ function Mypage() {
                   key={task.id}
                   task={task}
                   onStatusChange={fetchTasks}
-                  onDelete={fetchTasks}
+                  onDelete={() => handleDeleteWithToast(task.id)}
                 />
               ))
             )}
